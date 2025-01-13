@@ -11,20 +11,13 @@
 #include <iomanip>  // formatting output
 
 #include "ray.h"
+#include "hittable.h"
 
 // image
 const uint32_t imageWidth  = 256;
 const uint32_t imageHeight = 144;
 const uint8_t  numChannels = 3;
 
-bool HitSphere(const glm::vec3 &p, float radius, const Ray &r) {
-    glm::vec3 no = p - r.GetOrigin();
-    float a = glm::dot(r.GetDirection(), r.GetDirection());
-    float b = 2.0 * glm::dot(r.GetDirection(), no);
-    float c = glm::dot(no, no) - radius * radius;
-    float D = b * b - 4 * a * c;
-    return D >= 0;
-}
 
 void SavePngImage(uint8_t *image, const std::string &name) {
     std::string filePath = name + ".png";
@@ -48,14 +41,15 @@ void SetPixelColor(uint8_t *image, uint32_t px, uint32_t py, glm::vec3 color) {
     image[numChannels * (py * imageWidth + px) + 2] = ib;
 }
 
-glm::vec3 RayColor(const Ray &r) {
-    if (HitSphere(glm::vec3(0, 0, -1), 0.5, r)) {
-        return glm::vec3(1, 0, 0);
+glm::vec3 RayColor(const Ray &r, const Hittable &scene) {
+    HitInfo info;
+    if (scene.Hit(r, 0, std::numeric_limits<float>::infinity(), info)) {
+        return 0.5f * (info.N + 1.0f);
     }
 
     glm::vec3 dir = glm::normalize(r.GetDirection());
-    float t = 0.5f * (dir.y + 1.0f);
-    return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), t);
+    float a = 0.5f * (dir.y + 1.0f);
+    return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), a);
 }
 
 int main() {
@@ -73,6 +67,9 @@ int main() {
     glm::vec3 pixelDeltaV = viewportV / float(imageHeight);
     glm::vec3 viewportUpperLeft = cameraPos - glm::vec3(0, 0, focalLength) - viewportU / 2.0f - viewportV / 2.0f;
     glm::vec3 pixel00Pos = viewportUpperLeft + 0.5f * (pixelDeltaU + pixelDeltaV);
+
+    // scene
+    Scene scene;
     
     uint8_t *img = new uint8_t[imageWidth * imageHeight * numChannels];
 
@@ -90,7 +87,7 @@ int main() {
 
             Ray r = Ray(ro, rd);
             
-            glm::vec3 pixelColor = RayColor(r);
+            glm::vec3 pixelColor = RayColor(r, scene);
 
             SetPixelColor(img, i, j, pixelColor);
         }
