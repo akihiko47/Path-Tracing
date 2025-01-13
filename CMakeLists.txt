@@ -10,3 +10,5 @@ set ( CMAKE_CXX_EXTENSIONS        OFF )
 add_executable(PathTracing src/main.cpp)
 
 target_include_directories(PathTracing PRIVATE ${PROJECT_SOURCE_DIR}/dependencies)
+
+target_compile_definitions(PathTracing PRIVATE OUTPUT_DIR="${PROJECT_SOURCE_DIR}/output")
