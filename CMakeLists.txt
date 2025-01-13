@@ -7,9 +7,6 @@ set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
 
-find_package(glm COMPONENTS REQUIRED)
-
-
 add_executable(PathTracing src/main.cpp)
 
-target_link_libraries(PathTracing PRIVATE glm::glm)
+target_include_directories(PathTracing PRIVATE ${PROJECT_SOURCE_DIR}/dependencies)
