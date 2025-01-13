@@ -6,15 +6,14 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/hash.hpp>
 
 #include <iostream> // output
 #include <iomanip>  // formatting output
 
 
-const uint32_t image_width = 64;
-const uint32_t image_height = 64;
-const uint8_t num_channels = 3;
+const uint32_t image_width  = 256;
+const uint32_t image_height = 144;
+const uint8_t  num_channels = 3;
 
 void save_png_image(uint8_t *image, const std::string &name) {
     std::string filePath = name + ".png";
@@ -30,12 +29,12 @@ void save_png_image(uint8_t *image, const std::string &name) {
 
 int main() {
     
-    uint8_t img[image_width * image_height * num_channels];
+    uint8_t *img = new uint8_t[image_width * image_height * num_channels];
 
     std::clog << "Starting to render...\n" << std::flush;
 
     for (int j = 0; j < image_height; j++) {
-        std::clog << std::setprecision(2) << std::fixed << "\tProgress: " << float(j) / float(image_height) << "%" << '\n' << std::flush;
+        std::clog << std::setprecision(2) << "\tProgress: " << int((float(j) / float(image_height)) * 100) << "%" << '\n' << std::flush;
         for (int i = 0; i < image_width; i++) {
             double r = double(i) / (image_width - 1);
             double g = double(j) / (image_height - 1);
@@ -45,13 +44,15 @@ int main() {
             int ig = int(255.999 * g);
             int ib = int(255.999 * b);
 
-            img[num_channels * (j * image_height + i)] = ir;
-            img[num_channels * (j * image_height + i) + 1] = ig;
-            img[num_channels * (j * image_height + i) + 2] = ib;
+            img[num_channels * (j * image_width + i)] = ir;
+            img[num_channels * (j * image_width + i) + 1] = ig;
+            img[num_channels * (j * image_width + i) + 2] = ib;
         }
     }
     std::clog << "Done! Saving image.\n";
     save_png_image(img, "test");
+
+    delete[] img;
 
     return 0;
 }
