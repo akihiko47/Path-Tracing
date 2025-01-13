@@ -41,9 +41,9 @@ void SetPixelColor(uint8_t *image, uint32_t px, uint32_t py, glm::vec3 color) {
     image[numChannels * (py * imageWidth + px) + 2] = ib;
 }
 
-glm::vec3 RayColor(const Ray &r, const Hittable &scene) {
-    HitInfo info;
-    if (scene.Hit(r, 0, std::numeric_limits<float>::infinity(), info)) {
+glm::vec3 RayColor(const art::Ray &r, const art::Hittable &scene) {
+    art::HitInfo info;
+    if (scene.Hit(r, art::Interval(0, art::infinity), info)) {
         return 0.5f * (info.N + 1.0f);
     }
 
@@ -69,7 +69,7 @@ int main() {
     glm::vec3 pixel00Pos = viewportUpperLeft + 0.5f * (pixelDeltaU + pixelDeltaV);
 
     // scene
-    Scene scene;
+    art::Scene scene;
     
     uint8_t *img = new uint8_t[imageWidth * imageHeight * numChannels];
 
@@ -85,7 +85,7 @@ int main() {
             glm::vec3 rd = pixelPos - cameraPos;
             glm::vec3 ro = cameraPos;
 
-            Ray r = Ray(ro, rd);
+            art::Ray r = art::Ray(ro, rd);
             
             glm::vec3 pixelColor = RayColor(r, scene);
 
