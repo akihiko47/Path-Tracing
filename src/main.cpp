@@ -17,6 +17,15 @@ const uint32_t imageWidth  = 256;
 const uint32_t imageHeight = 144;
 const uint8_t  numChannels = 3;
 
+bool HitSphere(const glm::vec3 &p, float radius, const Ray &r) {
+    glm::vec3 no = p - r.GetOrigin();
+    float a = glm::dot(r.GetDirection(), r.GetDirection());
+    float b = 2.0 * glm::dot(r.GetDirection(), no);
+    float c = glm::dot(no, no) - radius * radius;
+    float D = b * b - 4 * a * c;
+    return D >= 0;
+}
+
 void SavePngImage(uint8_t *image, const std::string &name) {
     std::string filePath = name + ".png";
     #ifdef OUTPUT_DIR
@@ -40,6 +49,10 @@ void SetPixelColor(uint8_t *image, uint32_t px, uint32_t py, glm::vec3 color) {
 }
 
 glm::vec3 RayColor(const Ray &r) {
+    if (HitSphere(glm::vec3(0, 0, -1), 0.5, r)) {
+        return glm::vec3(1, 0, 0);
+    }
+
     glm::vec3 dir = glm::normalize(r.GetDirection());
     float t = 0.5f * (dir.y + 1.0f);
     return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), t);
