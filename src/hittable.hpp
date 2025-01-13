@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "ray.h"
+#include "ray.hpp"
 
 
 namespace art {
