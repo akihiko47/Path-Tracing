@@ -5,13 +5,14 @@
 
 #include "hittable.hpp"
 #include "image.hpp"
-
+#include "utils.hpp"
 
 namespace art {
 	class Camera {
 	public:
 
-		Camera() : m_pos(glm::vec3(0.0)) {}
+		Camera() : m_pos(glm::vec3(0.0)), m_nSamples(10) {}
+		Camera(glm::vec3 Pos, uint32_t nSamples) : m_pos(Pos), m_nSamples(nSamples) {}
 
 		void Render(Image &image, const Hittable &scene) {
 			// camera
@@ -22,28 +23,26 @@ namespace art {
 			// viewport vectors
 			glm::vec3 viewportU = glm::vec3(viewportWidth, 0, 0);
 			glm::vec3 viewportV = glm::vec3(0, -viewportHeight, 0);
-			glm::vec3 pixelDeltaU = viewportU / float(image.GetWidth());
-			glm::vec3 pixelDeltaV = viewportV / float(image.GetHeight());
+			m_pixelDeltaU = viewportU / float(image.GetWidth());
+			m_pixelDeltaV = viewportV / float(image.GetHeight());
 			glm::vec3 viewportUpperLeft = m_pos - glm::vec3(0, 0, focalLength) - viewportU / 2.0f - viewportV / 2.0f;
-			glm::vec3 pixel00Pos = viewportUpperLeft + 0.5f * (pixelDeltaU + pixelDeltaV);
+			m_pixel00Pos = viewportUpperLeft + 0.5f * (m_pixelDeltaU + m_pixelDeltaV);
+
+			// pre compute
+			float pixel_scale = 1.0f / m_nSamples;
 
 			std::clog << "Starting to render...\n" << std::flush;
 
 			for (uint32_t j = 0; j < image.GetHeight(); j++) {
 				std::clog << std::setprecision(2) << "\tProgress: " << int((float(j) / float(image.GetHeight())) * 100) << "%" << '\n' << std::flush;
 				for (uint32_t i = 0; i < image.GetWidth(); i++) {
-					float screenU = float(i) / (image.GetWidth() - 1);
-					float screenV = float(j) / (image.GetHeight() - 1);
 
-					glm::vec3 pixelPos = pixel00Pos + (float(i) * pixelDeltaU) + (float(j) * pixelDeltaV);
-					glm::vec3 rd = pixelPos - m_pos;
-					glm::vec3 ro = m_pos;
-
-					art::Ray r = art::Ray(ro, rd);
-
-					glm::vec3 pixelColor = RayColor(r, scene);
-
-					image.SetPixelColor(i, j, pixelColor);
+					glm::vec3 pixelColor(0);
+					for (int sample = 0; sample < m_nSamples; sample++) {
+						art::Ray r = GetRay(i, j);
+						pixelColor += RayColor(r, scene);
+					}
+					image.SetPixelColor(i, j, pixelColor * pixel_scale);
 				}
 			}
 		}
@@ -60,6 +59,21 @@ namespace art {
 			return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), a);
 		}
 
+		Ray GetRay(uint32_t i, uint32_t j) const {
+			glm::vec2 offset = art::RandomInSquare();
+			glm::vec3 pixelPos = m_pixel00Pos + ((i + offset.x) * m_pixelDeltaU) + ((j + offset.y) * m_pixelDeltaV);
+			glm::vec3 rd = pixelPos - m_pos;
+			glm::vec3 ro = m_pos;
+
+			return Ray(ro, rd);
+		}
+
+	private:
 		glm::vec3 m_pos;
+		uint32_t  m_nSamples;
+		glm::vec3 m_pixel00Pos;
+		glm::vec3 m_pixelDeltaU;
+		glm::vec3 m_pixelDeltaV;
+
 	};
 }
