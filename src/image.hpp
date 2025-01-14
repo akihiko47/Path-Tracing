@@ -21,6 +21,8 @@ namespace art {
 
 
         void SetPixelColor(uint32_t px, uint32_t py, glm::vec3 color) {
+            color = LinearToGamma(color);
+
             int ir = int(255.999 * color.r);
             int ig = int(255.999 * color.g);
             int ib = int(255.999 * color.b);
@@ -30,6 +32,18 @@ namespace art {
             m_data[m_numChannels * (py * m_width + px) + 2] = ib;
         }
 
+        glm::vec3 LinearToGamma(glm::vec3 linearColor) {
+            if (linearColor.r > 0) {
+                linearColor.r = std::sqrt(linearColor.r);
+            }
+            if (linearColor.g > 0) {
+                linearColor.g = std::sqrt(linearColor.g);
+            }
+            if (linearColor.b > 0) {
+                linearColor.b = std::sqrt(linearColor.b);
+            }
+            return linearColor;
+        }
 
         void SaveAsPng(const std::string &name) {
             std::string filePath = name + ".png";

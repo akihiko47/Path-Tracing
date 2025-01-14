@@ -18,7 +18,7 @@ int main() {
     camera.Render(image, scene);
     
     std::clog << "Done! Saving image.\n";
-    image.SaveAsPng("test");
+    image.SaveAsPng("gamma2");
 
     return 0;
 }
