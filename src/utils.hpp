@@ -14,4 +14,17 @@ namespace art {
 		// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 		return glm::vec2(art::Random() - 0.5, art::Random() - 0.5);
 	}
+
+	inline glm::vec3 RandomVec() {
+		return glm::normalize(glm::vec3(Random() - 0.5, Random() - 0.5, Random() - 0.5));
+	}
+
+	inline glm::vec3 RandomOnHemisphere(const glm::vec3 &N) {
+		glm::vec3 v = RandomVec();
+		if (glm::dot(v, N) > 0.0) {
+			return v;
+		} else {
+			return -v;
+		}
+	}
 }

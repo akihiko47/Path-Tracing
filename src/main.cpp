@@ -13,7 +13,7 @@
 int main() {
     art::Image image(512, 288);
     art::Scene scene;
-    art::Camera camera(glm::vec3(0), 20);
+    art::Camera camera(glm::vec3(0), 20, 10);
 
     camera.Render(image, scene);
     

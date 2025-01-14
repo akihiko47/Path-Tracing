@@ -11,8 +11,8 @@ namespace art {
 	class Camera {
 	public:
 
-		Camera() : m_pos(glm::vec3(0.0)), m_nSamples(10) {}
-		Camera(glm::vec3 Pos, uint32_t nSamples) : m_pos(Pos), m_nSamples(nSamples) {}
+		Camera() : m_pos(glm::vec3(0.0)), m_nSamples(10), m_maxDepth(10) {}
+		Camera(glm::vec3 Pos, uint32_t nSamples, uint32_t maxDepth) : m_pos(Pos), m_nSamples(nSamples), m_maxDepth(maxDepth) {}
 
 		void Render(Image &image, const Hittable &scene) {
 			// camera
@@ -40,7 +40,7 @@ namespace art {
 					glm::vec3 pixelColor(0);
 					for (int sample = 0; sample < m_nSamples; sample++) {
 						art::Ray r = GetRay(i, j);
-						pixelColor += RayColor(r, scene);
+						pixelColor += RayColor(r, m_maxDepth, scene);
 					}
 					image.SetPixelColor(i, j, pixelColor * pixel_scale);
 				}
@@ -48,10 +48,15 @@ namespace art {
 		}
 
 	private:
-		glm::vec3 RayColor(const art::Ray &r, const art::Hittable &scene) const {
+		glm::vec3 RayColor(const art::Ray &r, int currDepth, const art::Hittable &scene) const {
+			if (currDepth <= 0) {
+				return glm::vec3(0);
+			}
+
 			art::HitInfo info;
-			if (scene.Hit(r, art::Interval(0, art::infinity), info)) {
-				return 0.5f * (info.N + 1.0f);
+			if (scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
+				glm::vec3 dir = RandomOnHemisphere(info.N);
+				return 0.5f * RayColor(Ray(info.p, dir), currDepth - 1, scene);
 			}
 
 			glm::vec3 dir = glm::normalize(r.GetDirection());
@@ -69,8 +74,10 @@ namespace art {
 		}
 
 	private:
-		glm::vec3 m_pos;
 		uint32_t  m_nSamples;
+		uint32_t  m_maxDepth;
+		glm::vec3 m_pos;
+		
 		glm::vec3 m_pixel00Pos;
 		glm::vec3 m_pixelDeltaU;
 		glm::vec3 m_pixelDeltaV;
