@@ -9,22 +9,13 @@
 #include "hittable.hpp"
 #include "camera.hpp"
 #include "material.hpp"
+#include "scene.hpp"
 
 
 int main() {
     art::Image image(512, 288);
-    art::Scene scene;
+    art::Scene scene("toDo");
     art::Camera camera(glm::vec3(0), 300, 15);
-
-    art::Lambertian *matGround = new art::Lambertian(glm::vec3(0.4, 0.4, 0.4));
-    art::Lambertian *matCenter = new art::Lambertian(glm::vec3(0.8, 0.0, 0.0));
-    art::Metal *matLeft  = new art::Metal(glm::vec3(0.8, 0.8, 0.8), 0.1);
-    art::Metal *matRight = new art::Metal(glm::vec3(0.8, 0.6, 0.2), 0.9);
-
-    scene.AddObject(new art::Sphere(glm::vec3( 0.0,    0.0, -1.0),   0.5, matCenter));
-    scene.AddObject(new art::Sphere(glm::vec3( 0.0, -100.5, -1.0), 100.0, matGround));
-    scene.AddObject(new art::Sphere(glm::vec3(-1.0,    0.0, -1.0),   0.5, matLeft));
-    scene.AddObject(new art::Sphere(glm::vec3( 1.0,    0.0, -1.0),   0.5, matRight));
 
     camera.Render(image, scene);
     

@@ -5,7 +5,7 @@
 #include "ray.hpp"
 
 namespace art {
-	float infinity = std::numeric_limits<float>::infinity();
+	const float infinity = std::numeric_limits<float>::infinity();
 
 	class Material;  // to solve circular dependency
 	struct HitInfo {
@@ -91,44 +91,5 @@ namespace art {
 		glm::vec3 m_center;
 		float     m_radius;
 		Material *m_mat;
-	};
-
-
-	class Scene : public Hittable {
-	public:
-		Scene() { PopulateScene(); }
-
-		~Scene() {
-			for (Hittable *object : m_objects) {
-				delete object;
-			}
-		}
-
-		void AddObject(Hittable *obj) {
-			m_objects.push_back(obj);
-		}
-
-		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {
-			HitInfo tempInfo;
-			bool hit = false;
-			float tClosest = tSpan.GetMax();
-
-			for (Hittable *object : m_objects) {
-				if (object->Hit(r, Interval(tSpan.GetMin(), tClosest), tempInfo)) {
-					hit = true;
-					tClosest = tempInfo.t;
-					hitInfo = tempInfo;
-				}
-			}
-
-			return hit;
-		}
-
-	private:
-		void PopulateScene() {
-			
-		}
-
-		std::vector<Hittable*> m_objects;
 	};
 }
