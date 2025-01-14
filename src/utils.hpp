@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdlib>
 
 
@@ -19,7 +21,7 @@ namespace art {
 		return glm::normalize(glm::vec3(Random() - 0.5, Random() - 0.5, Random() - 0.5));
 	}
 
-	inline glm::vec3 RandomOnHemisphere(const glm::vec3 &N) {
+	glm::vec3 RandomOnHemisphere(const glm::vec3 &N) {
 		glm::vec3 v = RandomVec();
 		if (glm::dot(v, N) > 0.0) {
 			return v;
@@ -27,4 +29,11 @@ namespace art {
 			return -v;
 		}
 	}
+
+	bool VecNearZero(const glm::vec3& v) {
+		float s = 1e-8;
+		return (std::fabs(v.x) < s) && (std::fabs(v.y) < s) && (std::fabs(v.z) < s);
+	}
+
+
 }

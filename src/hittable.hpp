@@ -4,13 +4,14 @@
 
 #include "ray.hpp"
 
-
 namespace art {
 	float infinity = std::numeric_limits<float>::infinity();
 
+	class Material;  // to solve circular dependency
 	struct HitInfo {
 		glm::vec3 p;
 		glm::vec3 N;
+		Material *mat;
 		float t;
 		bool frontFace;
 
@@ -54,7 +55,7 @@ namespace art {
 
 	class Sphere : public Hittable {
 	public:
-		Sphere(const glm::vec3 &center, float radius) : m_center(center), m_radius(std::fmax(0, radius)) {}
+		Sphere(const glm::vec3 &center, float radius, Material *mat) : m_center(center), m_radius(std::fmax(0, radius)), m_mat(mat) {}
 
 		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {
 			glm::vec3 no = m_center - r.GetOrigin();
@@ -81,6 +82,7 @@ namespace art {
 			hitInfo.p = r.At(t);
 			glm::vec3 outN = (hitInfo.p - m_center) / m_radius;
 			hitInfo.SetFaceNormal(r, outN);
+			hitInfo.mat = m_mat;
 
 			return true;
 		}
@@ -88,18 +90,22 @@ namespace art {
 	private:
 		glm::vec3 m_center;
 		float     m_radius;
+		Material *m_mat;
 	};
 
 
 	class Scene : public Hittable {
 	public:
-		Scene() {
-			PopulateScene();
-		}
+		Scene() { PopulateScene(); }
+
 		~Scene() {
-			for (Hittable *object : objects) {
+			for (Hittable *object : m_objects) {
 				delete object;
 			}
+		}
+
+		void AddObject(Hittable *obj) {
+			m_objects.push_back(obj);
 		}
 
 		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {
@@ -107,7 +113,7 @@ namespace art {
 			bool hit = false;
 			float tClosest = tSpan.GetMax();
 
-			for (Hittable *object : objects) {
+			for (Hittable *object : m_objects) {
 				if (object->Hit(r, Interval(tSpan.GetMin(), tClosest), tempInfo)) {
 					hit = true;
 					tClosest = tempInfo.t;
@@ -120,10 +126,9 @@ namespace art {
 
 	private:
 		void PopulateScene() {
-			objects.push_back(new Sphere(glm::vec3(0, 0, -1), 0.5));
-			objects.push_back(new Sphere(glm::vec3(0, -100.5, -1), 100));
+			
 		}
 
-		std::vector<Hittable*> objects;
+		std::vector<Hittable*> m_objects;
 	};
 }

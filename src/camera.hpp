@@ -6,6 +6,7 @@
 #include "hittable.hpp"
 #include "image.hpp"
 #include "utils.hpp"
+#include "material.hpp"
 
 #define BOUNCE_DEBUG 0
 
@@ -60,11 +61,12 @@ namespace art {
 
 			art::HitInfo info;
 			if (scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
-				glm::vec3 dir = info.N + RandomVec();
-				if (BOUNCE_DEBUG) {
-					return RayColor(Ray(info.p, dir), currDepth - 1, scene);
+				Ray rayOut;
+				glm::vec3 attenuation;
+				if (info.mat->scatter(r, info, attenuation, rayOut)) {
+					return attenuation * RayColor(rayOut, currDepth - 1, scene);
 				}
-				return 0.5f * RayColor(Ray(info.p, dir), currDepth - 1, scene);
+				return glm::vec3(0);
 			}
 
 			// Ray out of scene
