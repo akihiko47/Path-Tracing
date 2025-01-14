@@ -7,6 +7,8 @@
 #include "image.hpp"
 #include "utils.hpp"
 
+#define BOUNCE_DEBUG 0
+
 namespace art {
 	class Camera {
 	public:
@@ -50,18 +52,30 @@ namespace art {
 	private:
 		glm::vec3 RayColor(const art::Ray &r, int currDepth, const art::Hittable &scene) const {
 			if (currDepth <= 0) {
-				return glm::vec3(0);
+				if (BOUNCE_DEBUG) {
+					return glm::vec3(1.0, 0.0, 0.0);
+				}
+				return glm::vec3(0.0);
 			}
 
 			art::HitInfo info;
 			if (scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
 				glm::vec3 dir = RandomOnHemisphere(info.N);
+				if (BOUNCE_DEBUG) {
+					return RayColor(Ray(info.p, dir), currDepth - 1, scene);
+				}
 				return 0.5f * RayColor(Ray(info.p, dir), currDepth - 1, scene);
+			}
+
+			// Ray out of scene
+			if (BOUNCE_DEBUG) {
+				return glm::vec3(1.0 - (float(currDepth) / m_maxDepth), 0.0, 0.0);
 			}
 
 			glm::vec3 dir = glm::normalize(r.GetDirection());
 			float a = 0.5f * (dir.y + 1.0f);
 			return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), a);
+			
 		}
 
 		Ray GetRay(uint32_t i, uint32_t j) const {
