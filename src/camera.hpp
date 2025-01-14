@@ -60,7 +60,7 @@ namespace art {
 
 			art::HitInfo info;
 			if (scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
-				glm::vec3 dir = RandomOnHemisphere(info.N);
+				glm::vec3 dir = info.N + RandomVec();
 				if (BOUNCE_DEBUG) {
 					return RayColor(Ray(info.p, dir), currDepth - 1, scene);
 				}
