@@ -35,5 +35,9 @@ namespace art {
 		return (std::fabs(v.x) < s) && (std::fabs(v.y) < s) && (std::fabs(v.z) < s);
 	}
 
-
+	float SchlicksReflectance(float cos, float refractionIndex) {
+		float r0 = (1 - refractionIndex) / (1 + refractionIndex);
+		r0 = r0 * r0;
+		return r0 + (1 - r0) * std::pow((1 - cos), 5);
+	}
 }

@@ -45,6 +45,7 @@ namespace art {
 						art::Ray r = GetRay(i, j);
 						pixelColor += RayColor(r, m_maxDepth, scene);
 					}
+
 					image.SetPixelColor(i, j, pixelColor * pixel_scale);
 				}
 			}
@@ -83,7 +84,7 @@ namespace art {
 		Ray GetRay(uint32_t i, uint32_t j) const {
 			glm::vec2 offset = art::RandomInSquare();
 			glm::vec3 pixelPos = m_pixel00Pos + ((i + offset.x) * m_pixelDeltaU) + ((j + offset.y) * m_pixelDeltaV);
-			glm::vec3 rd = pixelPos - m_pos;
+			glm::vec3 rd = glm::normalize(pixelPos - m_pos);
 			glm::vec3 ro = m_pos;
 
 			return Ray(ro, rd);

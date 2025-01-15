@@ -72,15 +72,15 @@ namespace art {
 
 			float t = (h - sqrtD) / a;
 			if (!tSpan.Surrounds(t)) {
-				float t = (h + sqrtD) / a;
+				t = (h + sqrtD) / a;
 				if (!tSpan.Surrounds(t)) {
 					return false;
 				}
 			}
 
 			hitInfo.t = t;
-			hitInfo.p = r.At(t);
-			glm::vec3 outN = (hitInfo.p - m_center) / m_radius;
+			hitInfo.p = r.At(hitInfo.t);
+			glm::vec3 outN = glm::normalize((hitInfo.p - m_center) / m_radius);
 			hitInfo.SetFaceNormal(r, outN);
 			hitInfo.mat = m_mat;
 

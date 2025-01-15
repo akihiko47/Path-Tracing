@@ -42,13 +42,13 @@ namespace art {
 		void PopulateScene(const std::string &fileName) {
 			m_materials.push_back(new Lambertian(glm::vec3(0.4, 0.4, 0.4)));
 			m_materials.push_back(new Lambertian(glm::vec3(0.8, 0.0, 0.0)));
-			m_materials.push_back(new Metal(glm::vec3(0.8, 0.8, 0.8), 0.1));
-			m_materials.push_back(new Metal(glm::vec3(0.8, 0.6, 0.2), 0.9));
+			m_materials.push_back(new Metal(glm::vec3(0.8, 0.8, 0.8), 0.2));
+			m_materials.push_back(new Dielectric(1.3, glm::vec3(0.2, 0.2, 0.9), 1.0));
 
 			m_objects.push_back(new Sphere(glm::vec3( 0.0,    0.0, -1.0),   0.5, m_materials[1]));
 			m_objects.push_back(new Sphere(glm::vec3( 0.0, -100.5, -1.0), 100.0, m_materials[0]));
-			m_objects.push_back(new Sphere(glm::vec3(-1.0,    0.0, -1.0),   0.5, m_materials[2]));
-			m_objects.push_back(new Sphere(glm::vec3( 1.0,    0.0, -1.0),   0.5, m_materials[3]));
+			m_objects.push_back(new Sphere(glm::vec3(-1.0,    0.0, -1.0),   0.5, m_materials[3]));
+			m_objects.push_back(new Sphere(glm::vec3( 1.0,    0.0, -1.0),   0.5, m_materials[2]));
 		}
 
 		std::vector<Hittable*> m_objects;

@@ -6,7 +6,7 @@ namespace art {
 	class Ray {
 	public:
 		Ray() : m_origin(glm::vec3(0)), m_direction(glm::vec3(0)) {}
-		Ray(glm::vec3 origin, glm::vec3 direction) : m_origin(origin), m_direction(direction) {}
+		Ray(glm::vec3 origin, glm::vec3 direction) : m_origin(origin), m_direction(glm::normalize(direction)) {}
 
 		glm::vec3 GetOrigin()    const { return m_origin; }
 		glm::vec3 GetDirection() const { return m_direction; }
