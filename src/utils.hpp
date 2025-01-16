@@ -30,6 +30,10 @@ namespace art {
 		}
 	}
 
+	glm::vec3 RandomOnDisk() {
+		return glm::normalize(glm::vec3(Random() - 0.5, Random() - 0.5, 0));
+	}
+
 	bool VecNearZero(const glm::vec3& v) {
 		float s = 1e-8;
 		return (std::fabs(v.x) < s) && (std::fabs(v.y) < s) && (std::fabs(v.z) < s);
