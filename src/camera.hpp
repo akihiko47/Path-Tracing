@@ -63,12 +63,12 @@ namespace art {
 
 			std::clog << "Starting to render...\n" << std::flush;
 
-			for (uint32_t j = 0; j < image.GetHeight(); j++) {
+			for (uint32_t j = 0, je = image.GetHeight(); j != je; ++j) {
 				std::clog << std::setprecision(2) << "\tProgress: " << int((float(j) / float(image.GetHeight())) * 100) << "%" << '\n' << std::flush;
-				for (uint32_t i = 0; i < image.GetWidth(); i++) {
+				for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
 
 					glm::vec3 pixelColor(0);
-					for (int sample = 0; sample < m_nSamples; sample++) {
+					for (uint32_t sample = 0; sample != m_nSamples; ++sample) {
 						art::Ray r = GetRay(i, j);
 						pixelColor += RayColor(r, m_maxDepth, scene);
 					}
