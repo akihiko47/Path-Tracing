@@ -10,17 +10,24 @@
 #include "camera.hpp"
 #include "material.hpp"
 #include "scene.hpp"
+#include "timer.hpp"
 
 
 int main() {
     art::Image image(512, 288);
     art::Scene scene{};
-    art::Camera camera(100, 15, glm::vec3(0, 0.7, 5), glm::vec3(0, 0, -50), 30, 0.4, 15);
+    art::Camera camera(100, 10, glm::vec3(0, 0.7, 5), glm::vec3(0, 0, -50), 30, 0, 15);
 
-    camera.Render(image, scene);
+    {
+        art::Timer timer{"Rendering"};
+        camera.Render(image, scene);
+    }
+
+    {
+        art::Timer timer{"Saving"};
+        image.SaveAsPng("test");
+    }
     
-    std::clog << "Done! Saving image.\n";
-    image.SaveAsPng("test");
 
     return 0;
 }
