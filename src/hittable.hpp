@@ -2,10 +2,13 @@
 
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "ray.hpp"
 
 namespace art {
 	const float infinity = std::numeric_limits<float>::infinity();
+	const float pi = 3.14159265359;
 
 	class Material;  // to solve circular dependency
 	struct HitInfo {
@@ -13,6 +16,8 @@ namespace art {
 		glm::vec3 N;
 		Material *mat;
 		float t;
+		float u;
+		float v;
 		bool frontFace;
 
 		void SetFaceNormal(const Ray &r, const glm::vec3 &outNormal) {
@@ -82,9 +87,18 @@ namespace art {
 			hitInfo.p = r.At(hitInfo.t);
 			glm::vec3 outN = glm::normalize((hitInfo.p - m_center) / m_radius);
 			hitInfo.SetFaceNormal(r, outN);
+			GetSphereUV(outN, hitInfo.u, hitInfo.v);
 			hitInfo.mat = m_mat;
 
 			return true;
+		}
+
+		static void GetSphereUV(const glm::vec3 &p, float &u, float &v) {
+			float theta = std::acos(-p.y);
+			float phi = std::atan2(-p.z, p.x) + pi;
+
+			u = phi / (2 * pi);
+			v = theta / pi;
 		}
 
 	private:

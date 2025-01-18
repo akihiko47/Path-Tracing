@@ -2,6 +2,7 @@
 
 #include "hittable.hpp"
 #include "material.hpp"
+#include "texture.hpp"
 
 namespace art {
 
@@ -41,14 +42,18 @@ namespace art {
 
 	private:
 		void PopulateScene() {
-			m_materials.push_back(new Lambertian(glm::vec3(0.4, 0.4, 0.4)));
+			m_textures.push_back(new SolidColorTexture(glm::vec3(0.6, 0.6, 0.6)));
+			m_textures.push_back(new SolidColorTexture(glm::vec3(0.2, 0.2, 0.2)));
+			m_textures.push_back(new SolidColorTexture(glm::vec3(0.6, 0.0, 0.0)));
+			m_textures.push_back(new CheckerTexture(1.0, m_textures[0], m_textures[1]));
+
+			m_materials.push_back(new Lambertian(m_textures[3]));
 			m_materials.push_back(new Metal(glm::vec3(0.1, 0.1, 0.1), 1.0));
 			m_materials.push_back(new Metal(glm::vec3(0.8, 0.6, 0.2), 1.0));
-			m_materials.push_back(new Lambertian(glm::vec3(0.6, 0.0, 0.0)));
+			m_materials.push_back(new Lambertian(m_textures[2]));
 			m_materials.push_back(new Dielectric(1.5, glm::vec3(0.2, 0.2, 0.9), 1.0));
 
-			m_objects.push_back(new Sphere(glm::vec3(0.0, -100.5, -1.0), 100.0, m_materials[0]));
-			m_objects.push_back(new Sphere(glm::vec3(0.0,    0.0, -300.0), 100.0, m_materials[1]));
+			m_objects.push_back(new Sphere(glm::vec3(0.0, -1000.5, -1.0), 1000.0, m_materials[0]));
 
 			for (int i = 0; i < 20; i++) {
 				m_objects.push_back(new Sphere(glm::vec3(-1.0, 0.0, -i * 3), 0.5, m_materials[(i + 2) % 3 + 2]));
@@ -60,6 +65,7 @@ namespace art {
 			
 		}
 
+		std::vector<Texture*> m_textures;
 		std::vector<Hittable*> m_objects;
 		std::vector<Material*> m_materials;
 	};

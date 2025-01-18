@@ -4,6 +4,7 @@
 
 
 namespace art {
+
 	inline float Random() {
 		return std::rand() / (RAND_MAX + 1.0);
 	}

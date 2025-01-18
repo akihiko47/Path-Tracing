@@ -2,6 +2,7 @@
 
 #include "hittable.hpp"
 #include "utils.hpp"
+#include "texture.hpp"
 
 namespace art {
 	class Material {
@@ -17,7 +18,7 @@ namespace art {
 
 	class Lambertian : public Material {
 	public:
-		Lambertian(const glm::vec3 &albedo) : m_albedo(albedo) {}
+		Lambertian(const Texture *albedo) : m_albedo(albedo) {}
 
 		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			glm::vec3 scatterDir = glm::normalize(hitInfo.N + RandomVec());
@@ -27,12 +28,12 @@ namespace art {
 			}
 
 			rayOut = Ray(hitInfo.p, scatterDir);
-			attenuation = m_albedo;
+			attenuation = m_albedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p);
 			return true;
 		}
 
 	private:
-		glm::vec3 m_albedo;
+		const Texture *m_albedo;
 	};
 
 

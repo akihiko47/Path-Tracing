@@ -16,7 +16,7 @@
 int main() {
     art::Image image(512, 288);
     art::Scene scene{};
-    art::Camera camera(100, 10, glm::vec3(0, 0.7, 5), glm::vec3(0, 0, -50), 30, 0, 15);
+    art::Camera camera(100, 10, glm::vec3(7, 5, 10), glm::vec3(0, 0, -10), 30, 0, 15);
 
     {
         art::Timer timer{"Rendering"};

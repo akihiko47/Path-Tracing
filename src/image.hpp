@@ -3,6 +3,7 @@
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
+#include "stb/stb_image.h"
 
 #include "glm/glm.hpp"
 
@@ -17,6 +18,7 @@ namespace art {
         Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : m_width(width), m_height(height), m_numChannels(nChannels) {
             m_data = new uint8_t[m_width * m_height * m_numChannels];
         }
+        Image(const std::string &filename) { LoadFromFile(filename); }
         ~Image() { delete m_data; }
 
 
@@ -55,6 +57,10 @@ namespace art {
             if (res == 0) {
                 std::cerr << "Error while saving image: " << filePath << "\n";
             }
+        }
+
+        void LoadFromFile(const std::string &filename) {
+
         }
 
         uint32_t GetWidth()       const { return m_width; }

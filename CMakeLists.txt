@@ -16,6 +16,7 @@ set (SOURCES
 	src/scene.hpp
 	src/timer.hpp
 	src/utils.hpp
+	src/texture.hpp
 )
 
 
