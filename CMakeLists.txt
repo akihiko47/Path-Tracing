@@ -1,4 +1,4 @@
-cmake_minimum_required ( VERSION 3.6 )
+cmake_minimum_required ( VERSION 3.20 )
 
 project ( PathTracing LANGUAGES CXX )
 
@@ -24,7 +24,9 @@ add_executable(PathTracing ${SOURCES})
 
 target_include_directories(PathTracing PRIVATE ${PROJECT_SOURCE_DIR}/dependencies ${PROJECT_SOURCE_DIR}/src)
 
-target_compile_definitions(PathTracing PRIVATE OUTPUT_DIR="${PROJECT_SOURCE_DIR}/output")
+cmake_path(SET OUTPUT_DIR ${PROJECT_SOURCE_DIR}/output)
+cmake_path(SET TEXTURE_DIR ${PROJECT_SOURCE_DIR}/textures)
+target_compile_definitions(PathTracing PRIVATE OUTPUT_DIR=\"${OUTPUT_DIR}\" TEXTURE_DIR=\"${TEXTURE_DIR}\")
 
 
 if(MSVC)

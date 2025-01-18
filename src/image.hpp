@@ -1,13 +1,16 @@
 #pragma once
 
+#include <iostream> 
+#include <filesystem>
+
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 #include "stb/stb_image.h"
 
 #include "glm/glm.hpp"
 
-#include <iostream> 
 
 namespace art {
     class Image {
@@ -54,13 +57,33 @@ namespace art {
                 filePath = std::string(outputDir) + "/" + name + ".png";
             #endif
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
-            if (res == 0) {
-                std::cerr << "Error while saving image: " << filePath << "\n";
-            }
+            assert(res != 0, "Error while saving image: " + filePath + "\n");
         }
 
         void LoadFromFile(const std::string &filename) {
+            m_numChannels = 3;
 
+            std::string filePath = filename;
+            std::filesystem::path namePath(filename);
+            if (namePath.is_relative()) {
+                #ifdef TEXTURE_DIR
+                    const char* textureDir = TEXTURE_DIR;
+                    filePath = std::string(textureDir) + "/" + filePath;
+                #endif
+            }
+
+            std::cout << "loading image " << filePath << "\n";
+
+            int texWidth, texHeight, texChannels;
+            m_data = stbi_load(filePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
+            
+            assert(m_data != NULL, "failed to load texture image!");
+            if (m_data == NULL) {
+                std::cerr << "failed to load texture image!";
+            }
+
+            m_width = texWidth;
+            m_height = texHeight;
         }
 
         uint32_t GetWidth()       const { return m_width; }

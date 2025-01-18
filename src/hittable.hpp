@@ -8,7 +8,7 @@
 
 namespace art {
 	const float infinity = std::numeric_limits<float>::infinity();
-	const float pi = 3.14159265359;
+	const float pi = 3.1415926;
 
 	class Material;  // to solve circular dependency
 	struct HitInfo {
