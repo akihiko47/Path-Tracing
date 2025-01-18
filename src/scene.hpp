@@ -42,7 +42,7 @@ namespace art {
 
 	private:
 		void PopulateScene() {
-			m_textures.push_back(new SolidColorTexture(glm::vec3(0.6, 0.6, 0.6)));
+			/*m_textures.push_back(new SolidColorTexture(glm::vec3(0.6, 0.6, 0.6)));
 			m_textures.push_back(new SolidColorTexture(glm::vec3(0.2, 0.2, 0.2)));
 			m_textures.push_back(new SolidColorTexture(glm::vec3(0.6, 0.0, 0.0)));
 			m_textures.push_back(new CheckerTexture(1.0, m_textures[0], m_textures[1]));
@@ -58,7 +58,19 @@ namespace art {
 			for (int i = 0; i < 20; i++) {
 				m_objects.push_back(new Sphere(glm::vec3(-1.0, 0.0, -i * 3), 0.5, m_materials[(i + 2) % 3 + 2]));
 				m_objects.push_back(new Sphere(glm::vec3( 1.0, 0.0, -i * 3), 0.5, m_materials[(i + 2) % 3 + 2]));
-			}
+			}*/
+
+			m_textures.push_back(new ImageTexture("earth.png"));
+
+			m_textures.push_back(new SolidColorTexture(glm::vec3(0.2)));
+			m_textures.push_back(new SolidColorTexture(glm::vec3(0.6)));
+			m_textures.push_back(new CheckerTexture(0.5, m_textures[1], m_textures[2]));
+
+			m_materials.push_back(new Metal(m_textures[0], 1.0));
+			m_materials.push_back(new Lambertian(m_textures[3]));
+
+			m_objects.push_back(new Sphere(glm::vec3(0), 2.0, m_materials[0]));
+			m_objects.push_back(new Sphere(glm::vec3(0.0, -1002, -1.0), 1000.0, m_materials[1]));
 		}
 
 		void PopulateScene(const std::string &fileName) {

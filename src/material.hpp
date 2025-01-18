@@ -18,7 +18,13 @@ namespace art {
 
 	class Lambertian : public Material {
 	public:
-		Lambertian(const Texture *albedo) : m_albedo(albedo) {}
+		Lambertian(const glm::vec3 &albedo) : 
+			m_albedo(albedo),
+			m_textureAlbedo(nullptr) {}
+
+		Lambertian(const Texture *albedo) :
+			m_albedo(glm::vec3(1)),
+			m_textureAlbedo(albedo) {}
 
 		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			glm::vec3 scatterDir = glm::normalize(hitInfo.N + RandomVec());
@@ -28,39 +34,54 @@ namespace art {
 			}
 
 			rayOut = Ray(hitInfo.p, scatterDir);
-			attenuation = m_albedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p);
+
+			attenuation = m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p) : m_albedo;
+			
 			return true;
 		}
 
 	private:
-		const Texture *m_albedo;
+		glm::vec3      m_albedo;
+		const Texture *m_textureAlbedo;
 	};
 
 
 	class Metal : public Material {
 	public:
-		Metal(const glm::vec3 &albedo = glm::vec3(1), float smoothness = 0.5) : m_albedo(albedo), m_smoothness(smoothness < 1 ? smoothness : 1) {}
+		Metal(const glm::vec3 &albedo, float smoothness) : 
+			m_albedo(albedo),
+			m_textureAlbedo(nullptr),
+			m_smoothness(std::clamp(smoothness, 0.0f, 1.0f)) {}
+
+		Metal(const Texture *albedo, float smoothness) :
+			m_albedo(glm::vec3(1)),
+			m_textureAlbedo(albedo),
+			m_smoothness(std::clamp(smoothness, 0.0f, 1.0f)) {
+		}
 
 		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			glm::vec3 reflectDir = glm::reflect(rayIn.GetDirection(), hitInfo.N);
 			reflectDir = glm::normalize(glm::normalize(reflectDir) + ((1 - m_smoothness) * RandomVec()));
 			rayOut = Ray(hitInfo.p, reflectDir);
-			attenuation = m_albedo;
+
+			attenuation = m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p) : m_albedo;
+
 			return (glm::dot(rayOut.GetDirection(), hitInfo.N) > 0);  // check if we are not reflecting inside object
 		}
 
 	private:
-		glm::vec3 m_albedo;
-		float m_smoothness;
+		glm::vec3      m_albedo;
+		const Texture *m_textureAlbedo;
+		float          m_smoothness;
 	};
 
 
 	class Dielectric : public Material {
 	public:
-		Dielectric(float refractionIndex, const glm::vec3 &albedo = glm::vec3(1), float smoothness = 0.5) :
+		Dielectric(float refractionIndex, const glm::vec3 &albedo, float smoothness) :
 			m_refractionIndex(refractionIndex),
 			m_albedo(albedo),
-			m_smoothness(smoothness < 1 ? smoothness : 1) {}
+			m_smoothness(std::clamp(smoothness, 0.0f, 1.0f)) {}
 
 		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			float ri = hitInfo.frontFace ? (1.0 / m_refractionIndex) : m_refractionIndex;

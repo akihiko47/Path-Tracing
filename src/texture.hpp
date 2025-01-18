@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
+#include "image.hpp"
 
 namespace art {
 	class Texture {
@@ -73,6 +74,28 @@ namespace art {
 		float          m_scale;
 		const Texture *m_evenTexture;
 		const Texture *m_oddTexture;
+	};
+
+
+	class ImageTexture : public Texture {
+	public:
+		ImageTexture(const std::string &filename) :
+			m_image(filename) {}
+
+		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const override {
+			float ip;  // dummy parameter for integer part
+
+			// getting fractional part of uv (for repeating)
+			u = std::modf(u, &ip);
+			v = 1.0 - std::modf(v, &ip);  // reversing y
+
+			uint32_t px = u * m_image.GetWidth();
+			uint32_t py = v * m_image.GetHeight();
+			return m_image.GetPixelColor(px, py);
+		}
+
+	private:
+		const Image m_image;
 	};
 }
 

@@ -25,6 +25,22 @@ namespace art {
         ~Image() { delete m_data; }
 
 
+        glm::vec3 GetPixelColor(uint32_t px, uint32_t py) const {
+            // cant sample out of bounds
+            if (!(0 <= px <= m_width) || !(0 <= px <= m_height)) {
+                std::cerr << "cant get x = " << px << ", y = " << py << " from image with width = " << m_width << ", height = " << m_height << "\n";
+                return glm::vec3(1, 0, 1);
+            }
+
+            // get pixel color in set of 3x[0, 1]
+            glm::vec3 res(
+                m_data[(py * m_width + px) * m_numChannels]     / 255.0f,
+                m_data[(py * m_width + px) * m_numChannels + 1] / 255.0f,
+                m_data[(py * m_width + px) * m_numChannels + 2] / 255.0f
+            );
+            return res;
+        }
+
         void SetPixelColor(uint32_t px, uint32_t py, glm::vec3 color) {
             color = LinearToGamma(color);
 
@@ -50,12 +66,14 @@ namespace art {
             return linearColor;
         }
 
-        void SaveAsPng(const std::string &name) {
+        void SaveAsPng(const std::string &name) const {
+            // saving to output directory specified by cmake
             std::string filePath = name + ".png";
             #ifdef OUTPUT_DIR
                 const char* outputDir = OUTPUT_DIR;
                 filePath = std::string(outputDir) + "/" + name + ".png";
             #endif
+
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
             assert(res != 0, "Error while saving image: " + filePath + "\n");
         }
@@ -64,7 +82,10 @@ namespace art {
             m_numChannels = 3;
 
             std::string filePath = filename;
-            std::filesystem::path namePath(filename);
+            std::filesystem::path namePath(filename);  // need this to check if path is relative
+
+            // if path is relative then seek inside textures folder (setup by cmake)
+            // otherwise use absolute path specified by user
             if (namePath.is_relative()) {
                 #ifdef TEXTURE_DIR
                     const char* textureDir = TEXTURE_DIR;
