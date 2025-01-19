@@ -2,6 +2,7 @@
 
 #include <iostream> 
 #include <filesystem>
+#include <cassert>
 
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION

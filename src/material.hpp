@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "hittable.hpp"
 #include "utils.hpp"
 #include "texture.hpp"
