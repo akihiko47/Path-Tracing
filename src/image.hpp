@@ -2,7 +2,6 @@
 
 #include <iostream> 
 #include <filesystem>
-#include <cassert>
 
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -76,7 +75,7 @@ namespace art {
             #endif
 
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
-            assert(res != 0, "Error while saving image: " + filePath + "\n");
+            assert(res != 0);
         }
 
         void LoadFromFile(const std::string &filename) {
@@ -99,7 +98,7 @@ namespace art {
             int texWidth, texHeight, texChannels;
             m_data = stbi_load(filePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
             
-            assert(m_data != NULL, "failed to load texture image!");
+            assert(m_data != NULL);
             if (m_data == NULL) {
                 std::cerr << "failed to load texture image!";
             }
