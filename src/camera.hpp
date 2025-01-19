@@ -8,10 +8,8 @@
 #include "utils.hpp"
 #include "material.hpp"
 
-#define BOUNCE_DEBUG 0
-
 namespace art {
-	class Camera {
+	class Camera final {
 	public:
 
 		Camera() : 
@@ -81,9 +79,6 @@ namespace art {
 	private:
 		glm::vec3 RayColor(const art::Ray &r, int currDepth, const art::Hittable &scene) const {
 			if (currDepth <= 0) {
-				if (BOUNCE_DEBUG) {
-					return glm::vec3(1.0, 0.0, 0.0);
-				}
 				return glm::vec3(0.0);
 			}
 
@@ -97,15 +92,9 @@ namespace art {
 				return glm::vec3(0);
 			}
 
-			// Ray out of scene
-			if (BOUNCE_DEBUG) {
-				return glm::vec3(1.0 - (float(currDepth) / m_maxDepth), 0.0, 0.0);
-			}
-
 			glm::vec3 dir = glm::normalize(r.GetDirection());
 			float a = 0.5f * (dir.y + 1.0f);
 			return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), a);
-			
 		}
 
 		Ray GetRay(uint32_t i, uint32_t j) const {

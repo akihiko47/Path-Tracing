@@ -14,7 +14,6 @@ namespace art {
 		virtual bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const {
 			return false;
 		}
-
 	};
 
 

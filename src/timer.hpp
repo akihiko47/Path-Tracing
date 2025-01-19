@@ -5,7 +5,7 @@
 #include <iostream>
 
 namespace art {
-	class Timer {
+	class Timer final {
 	public:
 		Timer(const std::string &name = "Default") :
 			m_startTimepoint(std::chrono::high_resolution_clock::now()),

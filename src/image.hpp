@@ -13,7 +13,7 @@
 
 
 namespace art {
-    class Image {
+    class Image final {
     public:
         Image() : m_width(64), m_height(64), m_numChannels(3) {
             m_data = new uint8_t[m_width * m_height * m_numChannels];

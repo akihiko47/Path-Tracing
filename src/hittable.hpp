@@ -27,7 +27,7 @@ namespace art {
 	};
 
 
-	class Interval {
+	class Interval final {
 	public:
 		Interval() : m_min(+infinity), m_max(-infinity) {}
 		Interval(float min, float max) : m_min(min), m_max(max) {}

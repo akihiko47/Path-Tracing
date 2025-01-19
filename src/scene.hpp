@@ -12,11 +12,14 @@ namespace art {
 		Scene(const std::string &fileName) { PopulateScene(fileName); }
 
 		~Scene() {
+			for (Hittable *object : m_objects) {
+				delete object;
+			}
 			for (Material *material : m_materials) {
 				delete material;
 			}
-			for (Hittable *object : m_objects) {
-				delete object;
+			for (Texture *texture : m_textures) {
+				delete texture;
 			}
 		}
 

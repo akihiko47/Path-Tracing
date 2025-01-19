@@ -14,9 +14,9 @@
 
 
 int main() {
-    art::Image image(1920, 1080);
+    art::Image image{512, 288};
     art::Scene scene{};
-    art::Camera camera(800, 20, glm::vec3(7, 7, 10), glm::vec3(0, 0, 0), 30, 0, 15);
+    art::Camera camera{100, 10, glm::vec3(7, 7, 10), glm::vec3(0, 0, 0), 30, 0, 15};
 
     {
         art::Timer timer{"Rendering"};
@@ -25,9 +25,8 @@ int main() {
 
     {
         art::Timer timer{"Saving"};
-        image.SaveAsPng("image-textures");
+        image.SaveAsPng("test");
     }
-    
 
     return 0;
 }
