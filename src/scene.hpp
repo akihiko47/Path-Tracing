@@ -83,8 +83,21 @@ namespace art {
 			m_objects.push_back(new Sphere(glm::vec3(0.0, -1002, -1.0), 1000.0, m_materials[1]));
 		}
 
-		void PopulateScene(const std::string &fileName) {
-			//YAML::Node config = YAML::LoadFile("sc")
+		void PopulateScene(const std::string &filename) {
+			std::string filePath = filename;
+			std::filesystem::path namePath(filename);  // need this to check if path is relative
+
+			// if path is relative then seek inside scenes folder (setup by cmake)
+			// otherwise use absolute path specified by user
+			if (namePath.is_relative()) {
+				#ifdef SCENE_DIR
+					const char* sceneDir = SCENE_DIR;
+					filePath = std::string(sceneDir) + "/" + filePath + ".yaml";
+				#endif
+			}
+
+			std::cout << "parsing scene " << filePath << "\n";
+			YAML::Node config = YAML::LoadFile(filePath);
 		}
 
 		std::vector<Texture*> m_textures;

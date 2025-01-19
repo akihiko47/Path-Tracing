@@ -24,9 +24,11 @@ add_executable(PathTracing ${SOURCES})
 
 target_include_directories(PathTracing PRIVATE ${PROJECT_SOURCE_DIR}/dependencies ${PROJECT_SOURCE_DIR}/src)
 
-cmake_path(SET OUTPUT_DIR ${PROJECT_SOURCE_DIR}/output)
-cmake_path(SET TEXTURE_DIR ${PROJECT_SOURCE_DIR}/textures)
-target_compile_definitions(PathTracing PRIVATE OUTPUT_DIR=\"${OUTPUT_DIR}\" TEXTURE_DIR=\"${TEXTURE_DIR}\")
+target_compile_definitions(PathTracing PRIVATE 
+	OUTPUT_DIR="${PROJECT_SOURCE_DIR}/output" 
+	TEXTURE_DIR="${PROJECT_SOURCE_DIR}/textures" 
+	SCENE_DIR="${PROJECT_SOURCE_DIR}/scenes"
+)
 
 
 include(FetchContent)

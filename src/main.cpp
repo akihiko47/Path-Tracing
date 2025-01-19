@@ -15,7 +15,7 @@
 
 int main() {
     art::Image image{512, 288};
-    art::Scene scene{};
+    art::Scene scene{"test"};
     art::Camera camera{100, 10, glm::vec3(7, 7, 10), glm::vec3(0, 0, 0), 30, 0, 15};
 
     {
