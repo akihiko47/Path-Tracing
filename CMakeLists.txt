@@ -29,6 +29,25 @@ cmake_path(SET TEXTURE_DIR ${PROJECT_SOURCE_DIR}/textures)
 target_compile_definitions(PathTracing PRIVATE OUTPUT_DIR=\"${OUTPUT_DIR}\" TEXTURE_DIR=\"${TEXTURE_DIR}\")
 
 
+include(FetchContent)
+
+FetchContent_Declare(
+	yaml-cpp
+	GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+	GIT_TAG yaml-cpp-0.7.0
+)
+
+FetchContent_GetProperties(yaml-cpp)
+
+if(NOT yaml-cpp_POPULATED)
+  message(STATUS "Fetching yaml-cpp...")
+  FetchContent_Populate(yaml-cpp)
+  add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml-cpp_BINARY_DIR})
+endif()
+
+target_link_libraries(PathTracing PUBLIC yaml-cpp::yaml-cpp)
+
+
 if(MSVC)
  target_compile_options(PathTracing PRIVATE "/MP")
 endif()

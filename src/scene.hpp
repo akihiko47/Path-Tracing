@@ -1,5 +1,7 @@
 #pragma once
 
+#include "yaml-cpp/yaml.h"
+
 #include "hittable.hpp"
 #include "material.hpp"
 #include "texture.hpp"
@@ -15,12 +17,17 @@ namespace art {
 			for (Hittable *object : m_objects) {
 				delete object;
 			}
+			m_objects.clear();
+
 			for (Material *material : m_materials) {
 				delete material;
 			}
+			m_materials.clear();
+
 			for (Texture *texture : m_textures) {
 				delete texture;
 			}
+			m_textures.clear();
 		}
 
 		void AddObject(Hittable *obj) {
@@ -77,11 +84,13 @@ namespace art {
 		}
 
 		void PopulateScene(const std::string &fileName) {
-			
+			//YAML::Node config = YAML::LoadFile("sc")
 		}
 
 		std::vector<Texture*> m_textures;
 		std::vector<Hittable*> m_objects;
 		std::vector<Material*> m_materials;
+
+		Camera *m_camera;
 	};
 }
