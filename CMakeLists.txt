@@ -6,6 +6,17 @@ set ( CMAKE_CXX_STANDARD          17 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
+
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message("Setting build type to 'RelWithDebInfo' as none was specified.")
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
+endif()
+
+
 set (SOURCES
 	src/main.cpp
 	src/camera.hpp
@@ -39,7 +50,10 @@ FetchContent_Declare(
 	GIT_TAG yaml-cpp-0.7.0
 )
 
-FetchContent_GetProperties(yaml-cpp)
+FetchContent_MakeAvailable(yaml-cpp)
+
+option(YAML_CPP_BUILD_CONTRIB "Enable yaml-cpp contrib in library" OFF)
+option(YAML_CPP_BUILD_TOOLS "Enable parse tools" OFF)
 
 if(NOT yaml-cpp_POPULATED)
   message(STATUS "Fetching yaml-cpp...")
