@@ -5,22 +5,17 @@
 
 #include <iostream>
 
-#include "ray.hpp"
-#include "hittable.hpp"
-#include "camera.hpp"
-#include "material.hpp"
-#include "scene.hpp"
 #include "timer.hpp"
+#include "scene-parser.hpp"
 
 
 int main() {
     art::Image image{512, 288};
-    art::Scene scene{"test"};
-    art::Camera camera{100, 10, glm::vec3(7, 7, 10), glm::vec3(0, 0, 0), 30, 0, 15};
+    art::SceneParser parser{};
 
     {
         art::Timer timer{"Rendering"};
-        camera.Render(image, scene);
+        parser.GetCamera()->Render(image, *parser.GetScene());
     }
 
     {

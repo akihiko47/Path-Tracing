@@ -28,6 +28,7 @@ set (SOURCES
 	src/timer.hpp
 	src/utils.hpp
 	src/texture.hpp
+	src/scene-parser.hpp
 )
 
 

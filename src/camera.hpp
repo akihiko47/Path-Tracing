@@ -31,7 +31,7 @@ namespace art {
 			m_focusDist(focusDist) {
 		}
 
-		void Render(Image &image, const Hittable &scene) {
+		void Render(Image &image, const Hittable &scene) const {
 			// camera
 			float h = std::tan(glm::radians(m_fov) / 2);
 			float viewportHeight = 2 * h * m_focusDist;
@@ -78,7 +78,7 @@ namespace art {
 
 	private:
 		glm::vec3 RayColor(const art::Ray &r, int currDepth, const art::Hittable &scene) const {
-			if (currDepth <= 0) {
+			if (currDepth <= 0) {  // reached bounce limit
 				return glm::vec3(0.0);
 			}
 
@@ -92,6 +92,7 @@ namespace art {
 				return glm::vec3(0);
 			}
 
+			// doesn't hit anything (skybox)
 			glm::vec3 dir = glm::normalize(r.GetDirection());
 			float a = 0.5f * (dir.y + 1.0f);
 			return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), a);
@@ -103,8 +104,10 @@ namespace art {
 
 			glm::vec3 ro;
 			if (m_defocusAngle <= 0) {
-				 ro = m_pos;
+				// no defocus blur
+				ro = m_pos;
 			} else {
+				// apply defocus blur
 				glm::vec3 p = RandomOnDisk();
 				ro = m_pos + (p.x * m_defocusU) + (p.y * m_defocusV);
 			}
@@ -122,11 +125,13 @@ namespace art {
 		float     m_defocusAngle;
 		float     m_focusDist;
 		
-		glm::vec3 m_pixel00Pos;
-		glm::vec3 m_pixelDeltaU;
-		glm::vec3 m_pixelDeltaV;
-		glm::vec3 m_defocusU;
-		glm::vec3 m_defocusV;
+		// these fields can be changed in Render() method 
+		// (semantic constancy)
+		mutable glm::vec3 m_pixel00Pos;
+		mutable glm::vec3 m_pixelDeltaU;
+		mutable glm::vec3 m_pixelDeltaV;
+		mutable glm::vec3 m_defocusU;
+		mutable glm::vec3 m_defocusV;
 
 	};
 }
