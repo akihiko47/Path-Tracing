@@ -1,3 +1,38 @@
-object:
-    position: [1.0, 2.0, 3.0]
-    test: something
+camera:
+    samples: 100
+    bounces: 10
+    position: [7.0, 7.0, 10.0]
+    look at: [0.0, 0.0, 0.0]
+    fov: 30
+    defocus angle: 30
+    focus distance: 10
+
+textures:
+    - earth texture:
+        type: image
+        file name: earth.png
+
+    - solid dark:
+        type: color
+        color: [0.2, 0.2, 0.2]
+    
+    - solid bright:
+        type: color
+        color: [0.7, 0.7, 0.7]
+    
+    - checker:
+        type: checker
+        scale: 0.5
+        texture 1: solid dark
+        texture 2: solid bright
+    
+materials:
+    - ground:
+        type: plastic
+        albedo: checker
+
+    - earth meterial:
+        type: metal
+        albedo: earth texture
+        smoothness: 1.0
+    

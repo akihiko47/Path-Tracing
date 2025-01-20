@@ -11,7 +11,7 @@
 
 int main() {
     art::Image image{512, 288};
-    art::SceneParser parser{};
+    art::SceneParser parser{"test"};
 
     {
         art::Timer timer{"Rendering"};

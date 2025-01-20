@@ -69,6 +69,23 @@ namespace art {
 
 		// get scene description from file
 		void PopulateScene(const std::string &filename) {
+			
+			YAML::Node file = OpenFile(filename);
+			YAML::Node camera = file["camera"];
+
+			m_camera = Camera(
+				camera["samples"].as<int>(),
+				camera["bounces"].as<int>(),
+				camera["position"].as<glm::vec3>(),
+				camera["look at"].as<glm::vec3>(),
+				camera["fov"].as<int>(),
+				camera["defocus angle"].as<int>(),
+				camera["focus distance"].as<int>()
+			);
+
+		}
+
+		YAML::Node OpenFile(const std::string &filename) {
 			std::string filePath = filename;
 			std::filesystem::path namePath(filename);  // need this to check if path is relative
 
@@ -82,7 +99,7 @@ namespace art {
 			}
 
 			std::cout << "parsing scene " << filePath << "\n";
-			YAML::Node config = YAML::LoadFile(filePath);
+			return YAML::LoadFile(filePath);
 		}
 
 		std::vector<Texture*> m_textures;
@@ -93,4 +110,29 @@ namespace art {
 		Scene  m_scene;
 	};
 
+}
+
+
+namespace YAML {
+	template<>
+	struct convert<glm::vec3> {
+		static Node encode(const glm::vec3& rhs) {
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec3& rhs) {
+			if (!node.IsSequence() || node.size() != 3) {
+				return false;
+			}
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			return true;
+		}
+	};
 }
