@@ -50,10 +50,12 @@ FetchContent_Declare(
 	GIT_TAG yaml-cpp-0.7.0
 )
 
+set(YAML_CPP_BUILD_CONTRIB OFF CACHE INTERNAL "Enable yaml-cpp contrib in library" FORCE)
+set(YAML_CPP_BUILD_TOOLS OFF CACHE INTERNAL "Enable parse tools" FORCE)
+set(BUILD_TESTING OFF CACHE INTERNAL "Build the testing tree." FORCE)
+
 FetchContent_MakeAvailable(yaml-cpp)
 
-option(YAML_CPP_BUILD_CONTRIB "Enable yaml-cpp contrib in library" OFF)
-option(YAML_CPP_BUILD_TOOLS "Enable parse tools" OFF)
 
 if(NOT yaml-cpp_POPULATED)
   message(STATUS "Fetching yaml-cpp...")
