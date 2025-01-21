@@ -110,9 +110,10 @@ namespace art {
 	class Quad : public Hittable {
 	public:
 		Quad(const glm::vec3 &Q, const glm::vec3 &u, const glm::vec3 &v, Material *mat) : m_Q(Q), m_u(u), m_v(v), m_mat(mat) {
-			m_N = glm::normalize(glm::cross(u, v));
+			glm::vec3 n = glm::cross(u, v);
+			m_N = glm::normalize(n);
 			m_D = glm::dot(m_N, Q);
-			m_w = m_N / glm::dot(m_N, m_N);
+			m_w = n / glm::dot(n, n);
 		}
 
 		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {

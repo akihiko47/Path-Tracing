@@ -11,23 +11,23 @@ camera:
 materials:
     middle:
         type: plastic
-        albedo: [0.0, 0.9, 0.0]
+        albedo: [0.2, 0.9, 0.2]
 
     left:
         type: plastic
-        albedo: [0.9, 0.0, 0.0]
+        albedo: [0.9, 0.2, 0.2]
 
     right:
         type: plastic
-        albedo: [0.0, 0.0, 0.9]
+        albedo: [0.2, 0.2, 0.9]
 
     up:
         type: plastic
-        albedo: [0.9, 0.9, 0.0]
+        albedo: [0.9, 0.4, 0.0]
 
     down:
         type: plastic
-        albedo: [0.0, 0.9, 0.9]
+        albedo: [0.2, 0.6, 0.9]
 
 objects:
     left:
