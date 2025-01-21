@@ -1,3 +1,4 @@
+---
 camera:
     samples: 100
     bounces: 10
@@ -27,7 +28,7 @@ textures:
         texture 2: solid bright
     
 materials:
-    - ground:
+    - ground material:
         type: plastic
         albedo: checker
 
@@ -35,4 +36,17 @@ materials:
         type: metal
         albedo: earth texture
         smoothness: 1.0
+
+objects:
+    - earth sphere:
+        type: sphere
+        position: [0.0, 0.0, 0.0]
+        radius: 1.0
+        material: earth material
     
+    - ground sphere:
+        type: sphere
+        position: [0.0, -1002.0, -1.0]
+        radius: 1000.0
+        material: ground material
+...

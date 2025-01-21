@@ -3,6 +3,8 @@
 #include "yaml-cpp/yaml.h"
 
 #include <string>
+#include <unordered_map>
+#include <map>
 
 #include "hittable.hpp"
 #include "material.hpp"
@@ -16,7 +18,6 @@ namespace art {
 	// it must allocate and deallocate textures, materials and objects
 	class SceneParser final {
 	public:
-		SceneParser() { PopulateScene(); }
 		SceneParser(const std::string &filename) { PopulateScene(filename); }
 
 		~SceneParser() {
@@ -29,60 +30,51 @@ namespace art {
 	private:
 
 		void Cleanup() {
-			for (Texture *t : m_textures) {
-				delete t;
+			for (std::unordered_map<std::string, Texture*>::iterator itr = m_textures.begin(); itr != m_textures.end(); itr++) {
+				delete (itr->second);
 			}
 			m_textures.clear();
 
-			for (Material *m : m_materials) {
-				delete m;
+			for (std::unordered_map<std::string, Material*>::iterator itr = m_materials.begin(); itr != m_materials.end(); itr++) {
+				delete (itr->second);
 			}
 			m_materials.clear();
 
-			for (Hittable *o : m_objects) {
-				delete o;
+			for (Hittable *obj : m_objects) {
+				delete obj;
 			}
 			m_objects.clear();
-		}
-
-		// manually populate scene from code
-		void PopulateScene() {
-			m_textures.push_back(new ImageTexture("earth.png"));
-
-			m_textures.push_back(new SolidColorTexture(glm::vec3(0.2)));
-			m_textures.push_back(new SolidColorTexture(glm::vec3(0.6)));
-			m_textures.push_back(new CheckerTexture(0.5, m_textures[1], m_textures[2]));
-
-			m_materials.push_back(new Metal(m_textures[0], 1.0));
-			m_materials.push_back(new Lambertian(m_textures[3]));
-
-			m_objects.push_back(new Sphere(glm::vec3(0), 2.0, m_materials[0]));
-			m_objects.push_back(new Sphere(glm::vec3(0.0, -1002, -1.0), 1000.0, m_materials[1]));
-
-			m_scene = Scene();
-			for (Hittable *object : m_objects) {
-				m_scene.AddObject(object);
-			}
-
-			m_camera = Camera{100, 10, glm::vec3(7, 7, 10), glm::vec3(0, 0, 0), 30, 0, 15};
 		}
 
 		// get scene description from file
 		void PopulateScene(const std::string &filename) {
 			
 			YAML::Node file = OpenFile(filename);
-			YAML::Node camera = file["camera"];
 
-			m_camera = Camera(
-				camera["samples"].as<int>(),
-				camera["bounces"].as<int>(),
-				camera["position"].as<glm::vec3>(),
-				camera["look at"].as<glm::vec3>(),
-				camera["fov"].as<int>(),
-				camera["defocus angle"].as<int>(),
-				camera["focus distance"].as<int>()
-			);
+			ParseCamera(file["camera"]);
 
+			// place parsed textures in unordered map
+			// (we need to get textures by name to create materials)
+			YAML::Node textures = file["textures"];
+			for (uint32_t i = 0, ie = textures.size(); i != ie; ++i) {
+				m_textures[textures[i].Tag()] = ParseTexture(textures[i]);
+			}
+
+			// place parsed materials in unordered map
+			// (we need to get materials by name to create objects)
+			YAML::Node materials = file["materials"];
+			for (uint32_t i = 0, ie = materials.size(); i != ie; ++i) {
+				m_materials[materials[i].Tag()] = ParseMaterial(materials[i]);
+			}
+
+			// objects are stored in array
+			for (YAML::Node object : file["objects"]) {
+				for (YAML::const_iterator it = object.begin(); it != object.end(); ++it) {
+					YAML::Node objectProperties = it->second;
+					m_objects.push_back(ParseObject(objectProperties));
+				}
+				
+			}
 		}
 
 		YAML::Node OpenFile(const std::string &filename) {
@@ -102,9 +94,52 @@ namespace art {
 			return YAML::LoadFile(filePath);
 		}
 
-		std::vector<Texture*> m_textures;
+		void ParseCamera(const YAML::Node &camera) {
+			m_camera = Camera(
+				camera["samples"].as<int>(),
+				camera["bounces"].as<int>(),
+				camera["position"].as<glm::vec3>(),
+				camera["look at"].as<glm::vec3>(),
+				camera["fov"].as<int>(),
+				camera["defocus angle"].as<int>(),
+				camera["focus distance"].as<int>()
+			);
+		}
+
+		Hittable* ParseObject(const YAML::Node &object) {
+			Hittable *result;
+
+			const std::string type = object["type"].as<std::string>();
+			if (type == "sphere") {
+				result = new Sphere(
+					object["position"].as<glm::vec3>(),
+					object["radius"].as<float>(),
+					m_materials[object["material"].as<std::string>()]
+				);
+
+				if (result == nullptr) {
+					std::cerr << "incorrect object data" << "\n";
+					exit(1);
+				}
+			} else {
+				std::cerr << "incorrect object type - " << object["type"].as<std::string>() << "\n";
+				exit(1);
+			}
+
+			return result;
+		}
+
+		Material* ParseMaterial(YAML::Node material) {
+			return nullptr;
+		}
+
+		Texture* ParseTexture(YAML::Node texture) {
+			return nullptr;
+		}
+
+		std::unordered_map<std::string, Texture*> m_textures;
+		std::unordered_map<std::string, Material*> m_materials;
 		std::vector<Hittable*> m_objects;
-		std::vector<Material*> m_materials;
 
 		Camera m_camera;
 		Scene  m_scene;
