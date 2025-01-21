@@ -19,17 +19,18 @@ namespace art {
 			m_lookAt(glm::vec3(0, 0, -1)),
 			m_fov(45),
 			m_defocusAngle(0),
-			m_focusDist(1) {}
+			m_focusDist(1),
+			m_background(glm::vec3(1)) {}
 
-		Camera(uint32_t nSamples, uint32_t maxDepth, glm::vec3 Pos, glm::vec3 lookAt, float fov, float defocusAngle, float focusDist) :
+		Camera(uint32_t nSamples, uint32_t maxDepth, glm::vec3 Pos, glm::vec3 lookAt, float fov, float defocusAngle, float focusDist, glm::vec3 background) :
 			m_nSamples(nSamples), 
 			m_maxDepth(maxDepth), 
 			m_pos(Pos),
 			m_lookAt(lookAt),
 			m_fov(fov),
 			m_defocusAngle(defocusAngle),
-			m_focusDist(focusDist) {
-		}
+			m_focusDist(focusDist),
+			m_background(background) {}
 
 		void Render(Image &image, const Hittable &scene) const {
 			// camera
@@ -82,20 +83,23 @@ namespace art {
 				return glm::vec3(0.0);
 			}
 
+			// return background (skybox) if no hit
 			art::HitInfo info;
-			if (scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
-				Ray rayOut;
-				glm::vec3 attenuation;
-				if (info.mat->scatter(r, info, attenuation, rayOut)) {
-					return attenuation * RayColor(rayOut, currDepth - 1, scene);
-				}
-				return glm::vec3(0);
+			if (!scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
+				return m_background;
 			}
 
-			// doesn't hit anything (skybox)
-			glm::vec3 dir = glm::normalize(r.GetDirection());
-			float a = 0.5f * (dir.y + 1.0f);
-			return glm::mix(glm::vec3(1.0), glm::vec3(0.5, 0.7, 1.0), a);
+			Ray rayOut;
+			glm::vec3 attenuation;
+			glm::vec3 emitted = info.mat->Emission(info.u, info.v, info.p);
+
+			if (!info.mat->Scatter(r, info, attenuation, rayOut)) {
+				return emitted;
+			}
+
+			glm::vec3 scattered = attenuation * RayColor(rayOut, currDepth - 1, scene);
+
+			return emitted + scattered;
 		}
 
 		Ray GetRay(uint32_t i, uint32_t j) const {
@@ -124,6 +128,7 @@ namespace art {
 		float     m_fov;
 		float     m_defocusAngle;
 		float     m_focusDist;
+		glm::vec3 m_background;
 		
 		// these fields can be changed in Render() method 
 		// (semantic constancy)

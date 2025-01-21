@@ -11,8 +11,12 @@ namespace art {
 	public:
 		virtual ~Material() = default;
 
-		virtual bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const {
+		virtual bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const {
 			return false;
+		}
+
+		virtual glm::vec3 Emission(float u, float v, const glm::vec3 &p) const {
+			return glm::vec3(0);
 		}
 	};
 
@@ -27,7 +31,7 @@ namespace art {
 			m_albedo(glm::vec3(1)),
 			m_textureAlbedo(albedo) {}
 
-		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
+		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			glm::vec3 scatterDir = glm::normalize(hitInfo.N + RandomVec());
 
 			if (VecNearZero(scatterDir)) {
@@ -60,7 +64,7 @@ namespace art {
 			m_smoothness(std::clamp(smoothness, 0.0f, 1.0f)) {
 		}
 
-		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
+		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			glm::vec3 reflectDir = glm::reflect(rayIn.GetDirection(), hitInfo.N);
 			reflectDir = glm::normalize(glm::normalize(reflectDir) + ((1 - m_smoothness) * RandomVec()));
 			rayOut = Ray(hitInfo.p, reflectDir);
@@ -84,7 +88,7 @@ namespace art {
 			m_albedo(albedo),
 			m_smoothness(std::clamp(smoothness, 0.0f, 1.0f)) {}
 
-		bool scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
+		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 			float ri = hitInfo.frontFace ? (1.0 / m_refractionIndex) : m_refractionIndex;
 
 			float cosTh = std::fmin(glm::dot(-rayIn.GetDirection(), hitInfo.N), 1.0);
@@ -114,5 +118,25 @@ namespace art {
 		float     m_refractionIndex;  // in air or ratio of enclosing media (if not inside air)
 		glm::vec3 m_albedo;
 		float     m_smoothness;
+	};
+
+	class DiffuseLight : public Material {
+	public:
+		DiffuseLight(const glm::vec3 &albedo) :
+			m_albedo(albedo),
+			m_textureAlbedo(nullptr) {}
+
+		DiffuseLight(const Texture *albedo) :
+			m_albedo(glm::vec3(0)),
+			m_textureAlbedo(albedo) {
+		}
+
+		glm::vec3 Emission(float u, float v, const glm::vec3 &p) const override {
+			return m_textureAlbedo ? m_textureAlbedo->Sample(u, v, p) : m_albedo;
+		}
+
+	private:
+		glm::vec3      m_albedo;
+		const Texture *m_textureAlbedo;
 	};
 }

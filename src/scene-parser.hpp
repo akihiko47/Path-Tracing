@@ -105,7 +105,8 @@ namespace art {
 				camera["look at"].as<glm::vec3>(),
 				camera["fov"].as<float>(),
 				camera["defocus angle"].as<float>(),
-				camera["focus distance"].as<float>()
+				camera["focus distance"].as<float>(),
+				camera["background"].as<glm::vec3>()
 			);
 		}
 
@@ -181,6 +182,16 @@ namespace art {
 					material["albedo"].as<glm::vec3>(),
 					material["smoothness"].as<float>()
 				);
+			} else if (type == "light") {
+				if (material["albedo"].IsSequence()) {
+					result = new DiffuseLight(
+						material["albedo"].as<glm::vec3>()
+					);
+				} else {
+					result = new DiffuseLight(
+						ParseTexture(material["albedo"].as<std::string>())
+					);
+				}
 			} else {
 				std::cerr << "incorrect material type - " << material["type"].as<std::string>() << "\n";
 				exit(1);
