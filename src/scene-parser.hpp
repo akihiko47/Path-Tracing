@@ -119,13 +119,20 @@ namespace art {
 					object["radius"].as<float>(),
 					ParseMaterial(object["material"].as<std::string>())
 				);
-
-				if (result == nullptr) {
-					std::cerr << "incorrect object data" << "\n";
-					exit(1);
-				}
+			} else if (type == "quad") {
+				result = new Quad(
+					object["q"].as<glm::vec3>(),
+					object["u"].as<glm::vec3>(),
+					object["v"].as<glm::vec3>(),
+					ParseMaterial(object["material"].as<std::string>())
+				);
 			} else {
 				std::cerr << "incorrect object type - " << object["type"].as<std::string>() << "\n";
+				exit(1);
+			}
+
+			if (result == nullptr) {
+				std::cerr << "incorrect object data" << "\n";
 				exit(1);
 			}
 
@@ -185,6 +192,11 @@ namespace art {
 
 		Texture* ParseTexture(std::string textureName) {
 			Texture *result;
+
+			// ckeck if there are any textures in file
+			if (!m_file["textures"]) {
+				return nullptr;
+			}
 
 			// check if material with that name already in map
 			if (m_textures.find(textureName) != m_textures.end()) {

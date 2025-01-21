@@ -1,0 +1,68 @@
+---
+camera:
+    samples: 100
+    bounces: 10
+    position: [0.0, 0.0, 9.0]
+    look at: [0.0, 0.0, 0.0]
+    fov: 80
+    defocus angle: 0
+    focus distance: 1
+    
+materials:
+    middle:
+        type: plastic
+        albedo: [0.0, 0.9, 0.0]
+
+    left:
+        type: plastic
+        albedo: [0.9, 0.0, 0.0]
+
+    right:
+        type: plastic
+        albedo: [0.0, 0.0, 0.9]
+
+    up:
+        type: plastic
+        albedo: [0.9, 0.9, 0.0]
+
+    down:
+        type: plastic
+        albedo: [0.0, 0.9, 0.9]
+
+objects:
+    left:
+        type: quad
+        q: [-3.0, -2.0,  5.0]
+        u: [ 0.0,  0.0, -4.0]
+        v: [ 0.0,  4.0,  0.0]
+        material: left
+
+    middle:
+        type: quad
+        q: [-2.0, -2.0,  0.0]
+        u: [ 4.0,  0.0,  0.0]
+        v: [ 0.0,  4.0,  0.0]
+        material: middle
+
+    right:
+        type: quad
+        q: [ 3.0, -2.0,  1.0]
+        u: [ 0.0,  0.0,  4.0]
+        v: [ 0.0,  4.0,  0.0]
+        material: right
+
+    up:
+        type: quad
+        q: [-2.0,  3.0,  1.0]
+        u: [ 4.0,  0.0,  0.0]
+        v: [ 0.0,  0.0,  4.0]
+        material: up
+
+    down:
+        type: quad
+        q: [-2.0, -3.0,  5.0]
+        u: [ 4.0,  0.0,  0.0]
+        v: [ 0.0,  0.0, -4.0]
+        material: down
+
+...

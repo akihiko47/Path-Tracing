@@ -106,4 +106,69 @@ namespace art {
 		float     m_radius;
 		Material *m_mat;
 	};
+
+	class Quad : public Hittable {
+	public:
+		Quad(const glm::vec3 &Q, const glm::vec3 &u, const glm::vec3 &v, Material *mat) : m_Q(Q), m_u(u), m_v(v), m_mat(mat) {
+			m_N = glm::normalize(glm::cross(u, v));
+			m_D = glm::dot(m_N, Q);
+			m_w = m_N / glm::dot(m_N, m_N);
+		}
+
+		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {
+			float denom = glm::dot(m_N, r.GetDirection());
+
+			// if ray is parallel to plane
+			if (std::fabs(denom) < 1e-8) {
+				return false;
+			}
+
+			// if hit is outside of ray interval
+			float t = (m_D - glm::dot(m_N, r.GetOrigin())) / denom;
+			if (!tSpan.Contains(t)) {
+				return false;
+			}
+
+			// point of intersection
+			glm::vec3 p = r.At(t);
+
+			// check if point is inside quad using planar coordinates
+			glm::vec3 planarHitVec = p - m_Q;
+			float alpha = glm::dot(m_w, glm::cross(planarHitVec, m_v));
+			float beta = glm::dot(m_w, glm::cross(m_u, planarHitVec));
+
+			if (!isInside(alpha, beta, hitInfo)) {
+				return false;
+			}
+
+			// set rest of hit info
+			hitInfo.t = t;
+			hitInfo.p = p;
+			hitInfo.mat = m_mat;
+			hitInfo.SetFaceNormal(r, m_N);
+
+			return true;
+		}
+
+		virtual bool isInside(float a, float b, HitInfo &info) const {
+			Interval unitInt = Interval{0, 1};
+
+			if (!unitInt.Contains(a) || !unitInt.Contains(b)) {
+				return false;
+			}
+
+			info.u = a;
+			info.v = b;
+			return true;
+		}
+
+	private:
+		glm::vec3 m_Q;
+		glm::vec3 m_u;
+		glm::vec3 m_v;
+		Material *m_mat;
+
+		glm::vec3 m_N, m_w;
+		float m_D;
+	};
 }
