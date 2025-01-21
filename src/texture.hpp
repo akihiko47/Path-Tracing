@@ -51,32 +51,6 @@ namespace art {
 	};
 
 
-	class CheckerSphereTexture : public Texture {
-	public:
-		CheckerSphereTexture(float scale, const Texture *evenTexture, const Texture *oddTexture) :
-			m_scale(scale),
-			m_evenTexture(evenTexture),
-			m_oddTexture(oddTexture) {
-		}
-
-		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const override {
-			int ui = static_cast<int>(std::floor(u * m_scale));
-			int vi = static_cast<int>(std::floor(v * m_scale));
-
-			if ((ui + vi) % 2 == 0) {
-				return m_evenTexture->Sample(u, v, p);
-			} else {
-				return m_oddTexture->Sample(u, v, p);
-			}
-		}
-
-	private:
-		float          m_scale;
-		const Texture *m_evenTexture;
-		const Texture *m_oddTexture;
-	};
-
-
 	class ImageTexture : public Texture {
 	public:
 		ImageTexture(const std::string &filename) :

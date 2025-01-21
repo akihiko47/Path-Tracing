@@ -199,11 +199,17 @@ namespace art {
 
 			if (type == "color") {
 				result = new SolidColorTexture(
-					texture["albedo"].as<glm::vec3>()
+					texture["color"].as<glm::vec3>()
 				);
 			} else if (type == "image") {
 				result = new ImageTexture(
 					texture["file name"].as<std::string>()
+				);
+			} else if (type == "checker") {
+				result = new CheckerTexture(
+					texture["scale"].as<float>(),
+					ParseTexture(texture["texture 1"].as<std::string>()),
+					ParseTexture(texture["texture 2"].as<std::string>())
 				);
 			} else {
 				std::cerr << "incorrect texture type - " << texture["type"].as<std::string>() << "\n";

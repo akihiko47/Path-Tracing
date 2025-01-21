@@ -30,7 +30,7 @@ textures:
 materials:
     ground material:
         type: plastic
-        albedo: [1.0, 0.0, 0.0]
+        albedo: checker
 
     earth material:
         type: metal
