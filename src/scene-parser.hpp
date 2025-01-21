@@ -49,31 +49,34 @@ namespace art {
 		// get scene description from file
 		void PopulateScene(const std::string &filename) {
 			
-			YAML::Node file = OpenFile(filename);
+			m_file = OpenFile(filename);
 
-			ParseCamera(file["camera"]);
+			ParseCamera(m_file["camera"]);
 
-			// place parsed textures in unordered map
-			// (we need to get textures by name to create materials)
-			YAML::Node textures = file["textures"];
-			for (uint32_t i = 0, ie = textures.size(); i != ie; ++i) {
-				m_textures[textures[i].Tag()] = ParseTexture(textures[i]);
-			}
+			//// place parsed textures in unordered map
+			//// (we need to get textures by name to create materials)
+			//YAML::Node textures = file["textures"];
+			//for (uint32_t i = 0, ie = textures.size(); i != ie; ++i) {
+			//	m_textures[textures[i].Tag()] = ParseTexture(textures[i]);
+			//}
 
-			// place parsed materials in unordered map
-			// (we need to get materials by name to create objects)
-			YAML::Node materials = file["materials"];
-			for (uint32_t i = 0, ie = materials.size(); i != ie; ++i) {
-				m_materials[materials[i].Tag()] = ParseMaterial(materials[i]);
-			}
+			//// place parsed materials in unordered map
+			//// (we need to get materials by name to create objects)
+			//YAML::Node materials = file["materials"];
+			//for (uint32_t i = 0, ie = materials.size(); i != ie; ++i) {
+			//	m_materials[materials[i].Tag()] = ParseMaterial(materials[i]);
+			//}
 
 			// objects are stored in array
-			for (YAML::Node object : file["objects"]) {
-				for (YAML::const_iterator it = object.begin(); it != object.end(); ++it) {
-					YAML::Node objectProperties = it->second;
-					m_objects.push_back(ParseObject(objectProperties));
-				}
-				
+			YAML::Node objects = m_file["objects"];
+			for (YAML::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+				YAML::Node objectProperties = it->second;
+				m_objects.push_back(ParseObject(objectProperties));
+			}
+
+			// add objects to scene
+			for (Hittable *obj : m_objects) {
+				m_scene.AddObject(obj);
 			}
 		}
 
@@ -100,9 +103,9 @@ namespace art {
 				camera["bounces"].as<int>(),
 				camera["position"].as<glm::vec3>(),
 				camera["look at"].as<glm::vec3>(),
-				camera["fov"].as<int>(),
-				camera["defocus angle"].as<int>(),
-				camera["focus distance"].as<int>()
+				camera["fov"].as<float>(),
+				camera["defocus angle"].as<float>(),
+				camera["focus distance"].as<float>()
 			);
 		}
 
@@ -114,7 +117,7 @@ namespace art {
 				result = new Sphere(
 					object["position"].as<glm::vec3>(),
 					object["radius"].as<float>(),
-					m_materials[object["material"].as<std::string>()]
+					ParseMaterial(object["material"].as<std::string>())
 				);
 
 				if (result == nullptr) {
@@ -129,13 +132,89 @@ namespace art {
 			return result;
 		}
 
-		Material* ParseMaterial(YAML::Node material) {
-			return nullptr;
+		Material* ParseMaterial(std::string materialName) {
+			Material *result;
+
+			// check if material with that name already in map
+			if (m_materials.find(materialName) != m_materials.end()) {
+				std::cout << "material" << materialName << "already exists\n";
+				return m_materials[materialName];
+			}
+
+			YAML::Node materials = m_file["materials"];
+			YAML::Node material = materials[materialName];
+
+			std::string type = material["type"].as<std::string>();
+
+			if (type == "plastic") {
+				if (material["albedo"].IsSequence()) {
+					result = new Lambertian(
+						material["albedo"].as<glm::vec3>()
+					);
+				} else {
+					result = new Lambertian(
+						ParseTexture(material["albedo"].as<std::string>())
+					);
+				}
+			} else if (type == "metal") {
+				if (material["albedo"].IsSequence()) {
+					result = new Metal(
+						material["albedo"].as<glm::vec3>(),
+						material["smoothness"].as<float>()
+					);
+				} else {
+					result = new Metal(
+						ParseTexture(material["albedo"].as<std::string>()),
+						material["smoothness"].as<float>()
+					);
+				}
+			} else if (type == "glass") {
+				result = new Dielectric(
+					material["refraction index"].as<float>(),
+					material["albedo"].as<glm::vec3>(),
+					material["smoothness"].as<float>()
+				);
+			} else {
+				std::cerr << "incorrect material type - " << material["type"].as<std::string>() << "\n";
+				exit(1);
+			}
+
+			m_materials[materialName] = result;
+			return result;
 		}
 
-		Texture* ParseTexture(YAML::Node texture) {
-			return nullptr;
+		Texture* ParseTexture(std::string textureName) {
+			Texture *result;
+
+			// check if material with that name already in map
+			if (m_textures.find(textureName) != m_textures.end()) {
+				std::cout << "texture" << textureName << "already exists\n";
+				return m_textures[textureName];
+			}
+
+			YAML::Node textures = m_file["textures"];
+			YAML::Node texture = textures[textureName];
+
+			std::string type = texture["type"].as<std::string>();
+
+			if (type == "color") {
+				result = new SolidColorTexture(
+					texture["albedo"].as<glm::vec3>()
+				);
+			} else if (type == "image") {
+				result = new ImageTexture(
+					texture["file name"].as<std::string>()
+				);
+			} else {
+				std::cerr << "incorrect texture type - " << texture["type"].as<std::string>() << "\n";
+				exit(1);
+			}
+
+			m_textures[textureName] = result;
+			return result;
 		}
+
+		YAML::Node m_file;
 
 		std::unordered_map<std::string, Texture*> m_textures;
 		std::unordered_map<std::string, Material*> m_materials;

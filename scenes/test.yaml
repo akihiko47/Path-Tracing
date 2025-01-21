@@ -5,46 +5,46 @@ camera:
     position: [7.0, 7.0, 10.0]
     look at: [0.0, 0.0, 0.0]
     fov: 30
-    defocus angle: 30
-    focus distance: 10
+    defocus angle: 0
+    focus distance: 1
 
 textures:
-    - earth texture:
+    earth texture:
         type: image
         file name: earth.png
 
-    - solid dark:
+    solid dark:
         type: color
         color: [0.2, 0.2, 0.2]
     
-    - solid bright:
+    solid bright:
         type: color
         color: [0.7, 0.7, 0.7]
     
-    - checker:
+    checker:
         type: checker
         scale: 0.5
         texture 1: solid dark
         texture 2: solid bright
     
 materials:
-    - ground material:
+    ground material:
         type: plastic
-        albedo: checker
+        albedo: [1.0, 0.0, 0.0]
 
-    - earth meterial:
+    earth material:
         type: metal
         albedo: earth texture
         smoothness: 1.0
 
 objects:
-    - earth sphere:
+    earth sphere:
         type: sphere
         position: [0.0, 0.0, 0.0]
-        radius: 1.0
+        radius: 2.0
         material: earth material
     
-    - ground sphere:
+    ground sphere:
         type: sphere
         position: [0.0, -1002.0, -1.0]
         radius: 1000.0
