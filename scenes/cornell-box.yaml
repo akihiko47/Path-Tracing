@@ -28,6 +28,17 @@ materials:
         type: light
         albedo: [15, 15, 15]
 
+    glass:
+        type: glass
+        refraction index: 1.5
+        albedo: [1.0, 1.0, 1.0]
+        smoothness: 1.0
+
+    metal:
+        type: metal
+        albedo: [1.0, 1.0, 1.0]
+        smoothness: 1.0
+
     
 
 objects:
@@ -72,4 +83,16 @@ objects:
         u: [555,0,0]
         v: [0,555,0]
         material: white
+
+    sphere:
+        type: sphere
+        position: [388, 100, 388]
+        radius: 100
+        material: metal
+
+    sphere:
+        type: sphere
+        position: [166, 100, 166]
+        radius: 100
+        material: glass
 ...
