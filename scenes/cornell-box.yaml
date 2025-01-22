@@ -1,0 +1,75 @@
+---
+output:
+    width: 400
+    height: 400
+    file name: cornell-box
+
+camera:
+    samples: 100
+    bounces: 10
+    position: [278, 278, -800]
+    look at: [278, 278, 0]
+    fov: 40
+    
+materials:
+    red:
+        type: plastic
+        albedo: [0.65, 0.05, 0.05]
+
+    white:
+        type: plastic
+        albedo: [0.73, 0.73, 0.73]
+
+    green:
+        type: plastic
+        albedo: [0.12, 0.45, 0.15]
+
+    light:
+        type: light
+        albedo: [15, 15, 15]
+
+    
+
+objects:
+    left wall:
+        type: quad
+        q: [555,0,0]
+        u: [0,555,0]
+        v: [0,0,555]
+        material: green
+
+    right wall:
+        type: quad
+        q: [0,0,0]
+        u: [0,555,0]
+        v: [0,0,555]
+        material: red
+    
+    light:
+        type: quad
+        q: [343,554,332]
+        u: [-130,0,0]
+        v: [0,0,-105]
+        material: light
+
+    floor:
+        type: quad
+        q: [0,0,0]
+        u: [555,0,0]
+        v: [0,0,555]
+        material: white
+
+    ceiling:
+        type: quad
+        q: [555,555,555]
+        u: [-555,0,0]
+        v: [0,0,-555]
+        material: white
+
+    back wall:
+        type: quad
+        q: [0,0,555]
+        u: [555,0,0]
+        v: [0,555,0]
+        material: white
+...

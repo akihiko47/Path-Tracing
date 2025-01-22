@@ -10,7 +10,7 @@
 
 
 int main() {
-    art::SceneParser parser{"light"};
+    art::SceneParser parser{"cornell-box"};
 
     {
         art::Timer timer{"Rendering"};

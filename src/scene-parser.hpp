@@ -103,7 +103,7 @@ namespace art {
 				camera["fov"] ? camera["fov"].as<float>() : 45,
 				camera["defocus angle"] ? camera["defocus angle"].as<float>() : 0,
 				camera["focus distance"] ? camera["focus distance"].as<float>() : 1,
-				camera["background"] ? camera["background"].as<glm::vec3>() : glm::vec3(1)
+				camera["background"] ? camera["background"].as<glm::vec3>() : glm::vec3(0)
 			);
 		}
 
