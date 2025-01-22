@@ -89,24 +89,34 @@ namespace art {
 		}
 
 		void ParseCamera(const YAML::Node &camera) {
+			ErrorCheck(m_file, "camera");
+			ErrorCheck(camera, "samples");
+			ErrorCheck(camera, "bounces");
+			ErrorCheck(camera, "position");
+			ErrorCheck(camera, "look at");
+
 			m_camera = Camera(
 				camera["samples"].as<int>(),
 				camera["bounces"].as<int>(),
 				camera["position"].as<glm::vec3>(),
 				camera["look at"].as<glm::vec3>(),
-				camera["fov"].as<float>(),
-				camera["defocus angle"].as<float>(),
-				camera["focus distance"].as<float>(),
-				camera["background"].as<glm::vec3>()
+				camera["fov"] ? camera["fov"].as<float>() : 45,
+				camera["defocus angle"] ? camera["defocus angle"].as<float>() : 0,
+				camera["focus distance"] ? camera["focus distance"].as<float>() : 1,
+				camera["background"] ? camera["background"].as<glm::vec3>() : glm::vec3(1)
 			);
 		}
 
 		void ParseOutput(const YAML::Node &image) {
+			ErrorCheck(m_file, "output");
+			ErrorCheck(image, "width");
+			ErrorCheck(image, "height");
+
 			m_renderImage = new Image(
 				image["width"].as<int>(),
 				image["height"].as<int>()
 			);
-			m_outputFileName = m_file["output"]["file name"].as<std::string>();
+			m_outputFileName = image["file name"].as<std::string>();
 		}
 
 		Hittable* ParseObject(const YAML::Node &object) {
@@ -114,12 +124,20 @@ namespace art {
 
 			const std::string type = object["type"].as<std::string>();
 			if (type == "sphere") {
+				ErrorCheck(object, "position");
+				ErrorCheck(object, "radius");
+				ErrorCheck(object, "material");
+
 				result = new Sphere(
 					object["position"].as<glm::vec3>(),
 					object["radius"].as<float>(),
 					ParseMaterial(object["material"].as<std::string>())
 				);
 			} else if (type == "quad") {
+				ErrorCheck(object, "q");
+				ErrorCheck(object, "u");
+				ErrorCheck(object, "v");
+
 				result = new Quad(
 					object["q"].as<glm::vec3>(),
 					object["u"].as<glm::vec3>(),
@@ -128,11 +146,6 @@ namespace art {
 				);
 			} else {
 				std::cerr << "incorrect object type - " << object["type"].as<std::string>() << "\n";
-				exit(1);
-			}
-
-			if (result == nullptr) {
-				std::cerr << "incorrect object data" << "\n";
 				exit(1);
 			}
 
@@ -154,6 +167,8 @@ namespace art {
 			std::string type = material["type"].as<std::string>();
 
 			if (type == "plastic") {
+				ErrorCheck(material, "albedo");
+
 				if (material["albedo"].IsSequence()) {
 					result = new Lambertian(
 						material["albedo"].as<glm::vec3>()
@@ -164,6 +179,9 @@ namespace art {
 					);
 				}
 			} else if (type == "metal") {
+				ErrorCheck(material, "albedo");
+				ErrorCheck(material, "smoothness");
+
 				if (material["albedo"].IsSequence()) {
 					result = new Metal(
 						material["albedo"].as<glm::vec3>(),
@@ -176,12 +194,18 @@ namespace art {
 					);
 				}
 			} else if (type == "glass") {
+				ErrorCheck(material, "refraction index");
+				ErrorCheck(material, "albedo");
+				ErrorCheck(material, "smoothness");
+
 				result = new Dielectric(
 					material["refraction index"].as<float>(),
 					material["albedo"].as<glm::vec3>(),
 					material["smoothness"].as<float>()
 				);
 			} else if (type == "light") {
+				ErrorCheck(material, "albedo");
+
 				if (material["albedo"].IsSequence()) {
 					result = new DiffuseLight(
 						material["albedo"].as<glm::vec3>()
@@ -220,14 +244,21 @@ namespace art {
 			std::string type = texture["type"].as<std::string>();
 
 			if (type == "color") {
+				ErrorCheck(texture, "color");
+
 				result = new SolidColorTexture(
 					texture["color"].as<glm::vec3>()
 				);
 			} else if (type == "image") {
+				ErrorCheck(texture, "file name");
+
 				result = new ImageTexture(
 					texture["file name"].as<std::string>()
 				);
 			} else if (type == "checker") {
+				ErrorCheck(texture, "texture 1");
+				ErrorCheck(texture, "texture 2");
+
 				result = new CheckerTexture(
 					texture["scale"].as<float>(),
 					ParseTexture(texture["texture 1"].as<std::string>()),
@@ -240,6 +271,13 @@ namespace art {
 
 			m_textures[textureName] = result;
 			return result;
+		}
+
+		void ErrorCheck(YAML::Node node, const std::string &value) {
+			if (!node[value]) {
+				std::cerr << "parsing error!\n\n" << node << "\n\ndoes't contain: " << value << "\n";
+				exit(1);
+			}
 		}
 
 		YAML::Node m_file;
