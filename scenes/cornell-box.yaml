@@ -6,7 +6,7 @@ output:
 
 camera:
     samples: 100
-    bounces: 10
+    bounces: 8
     position: [278, 278, -800]
     look at: [278, 278, 0]
     fov: 40

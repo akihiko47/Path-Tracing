@@ -18,6 +18,15 @@ namespace art {
 		return glm::vec2(art::Random() - 0.5, art::Random() - 0.5);
 	}
 
+	inline glm::vec2 RandomInStratifiedSquare(uint32_t s_i, uint32_t s_j, float regionSize) {
+		// Returns the vector to a random point in the stratified region
+		// of unit square
+		return glm::vec2(
+			((s_i + Random()) * regionSize) - 0.5,
+			((s_j + Random()) * regionSize) - 0.5
+		);
+	}
+
 	inline glm::vec3 RandomVec() {
 		return glm::normalize(glm::vec3(Random() - 0.5, Random() - 0.5, Random() - 0.5));
 	}

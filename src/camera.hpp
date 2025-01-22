@@ -57,8 +57,12 @@ namespace art {
 			m_defocusU = u * defocusRadius;
 			m_defocusV = v * defocusRadius;
 
+			// stratification
+			stratNumRow = static_cast<int>(std::sqrt(m_nSamples));
+			stratRegionEdgeLength = 1.0 / stratNumRow;
+
 			// pre compute
-			float pixel_scale = 1.0f / m_nSamples;
+			float pixel_scale = 1.0f / (stratNumRow * stratNumRow);
 
 			std::clog << "Starting to render...\n" << std::flush;
 
@@ -67,9 +71,11 @@ namespace art {
 				for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
 
 					glm::vec3 pixelColor(0);
-					for (uint32_t sample = 0; sample != m_nSamples; ++sample) {
-						art::Ray r = GetRay(i, j);
-						pixelColor += RayColor(r, m_maxDepth, scene);
+					for (uint32_t s_j = 0; s_j < stratNumRow; s_j++) {
+						for (uint32_t s_i = 0; s_i < stratNumRow; s_i++) {
+							art::Ray r = GetRay(i, j, s_i, s_j);
+							pixelColor += RayColor(r, m_maxDepth, scene);
+						}
 					}
 
 					image.SetPixelColor(i, j, pixelColor * pixel_scale);
@@ -102,8 +108,8 @@ namespace art {
 			return emitted + scattered;
 		}
 
-		Ray GetRay(uint32_t i, uint32_t j) const {
-			glm::vec2 offset = art::RandomInSquare();
+		Ray GetRay(uint32_t i, uint32_t j, uint32_t s_i, uint32_t s_j) const {
+			glm::vec2 offset = art::RandomInStratifiedSquare(s_i, s_j, stratRegionEdgeLength);
 			glm::vec3 pixelPos = m_pixel00Pos + ((i + offset.x) * m_pixelDeltaU) + ((j + offset.y) * m_pixelDeltaV);		
 
 			glm::vec3 ro;
@@ -137,6 +143,10 @@ namespace art {
 		mutable glm::vec3 m_pixelDeltaV;
 		mutable glm::vec3 m_defocusU;
 		mutable glm::vec3 m_defocusV;
+
+		// stratification
+		mutable int stratNumRow;              // number of stratification regions in pixel row
+		mutable float stratRegionEdgeLength;  // edge length of each stratification region
 
 	};
 }
