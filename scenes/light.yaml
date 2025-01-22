@@ -1,4 +1,9 @@
 ---
+output:
+    width: 512
+    height: 288
+    file name: light-scene
+
 camera:
     samples: 100
     bounces: 10
@@ -42,7 +47,7 @@ materials:
     metal:
         type: metal
         albedo: [0.8, 0.8, 0.8]
-        smoothness: 0.8
+        smoothness: 0.6
 
     light:
         type: light
@@ -51,7 +56,7 @@ materials:
 objects:
     earth quad:
         type: quad
-        q: [-25.0, -1.0, -25.0]
+        q: [-25.0, -1.0001, -25.0]
         u: [ 50.0,  0.0,   0.0]
         v: [  0.0,  0.0,  50.0]
         material: ground

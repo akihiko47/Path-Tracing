@@ -22,7 +22,7 @@ namespace art {
             m_data = new uint8_t[m_width * m_height * m_numChannels];
         }
         Image(const std::string &filename) { LoadFromFile(filename); }
-        ~Image() { delete m_data; }
+        ~Image() { stbi_image_free(m_data); }
 
 
         glm::vec3 GetPixelColor(uint32_t px, uint32_t py) const {

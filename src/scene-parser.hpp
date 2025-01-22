@@ -24,8 +24,10 @@ namespace art {
 			Cleanup();
 		}
 
-		const Camera   *GetCamera() const { return &m_camera; }
-		const Hittable *GetScene()  const { return &m_scene; }
+		const Camera      &GetCamera()         const { return m_camera; }
+		const Hittable    &GetScene()          const { return m_scene; }
+		      Image       &GetImage()                { return *m_renderImage; }  // not const because we need to render to it
+		const std::string &GetOutputFileName() const { return m_outputFileName; }
 
 	private:
 
@@ -44,6 +46,8 @@ namespace art {
 				delete obj;
 			}
 			m_objects.clear();
+
+			delete m_renderImage;
 		}
 
 		// get scene description from file
@@ -52,20 +56,7 @@ namespace art {
 			m_file = OpenFile(filename);
 
 			ParseCamera(m_file["camera"]);
-
-			//// place parsed textures in unordered map
-			//// (we need to get textures by name to create materials)
-			//YAML::Node textures = file["textures"];
-			//for (uint32_t i = 0, ie = textures.size(); i != ie; ++i) {
-			//	m_textures[textures[i].Tag()] = ParseTexture(textures[i]);
-			//}
-
-			//// place parsed materials in unordered map
-			//// (we need to get materials by name to create objects)
-			//YAML::Node materials = file["materials"];
-			//for (uint32_t i = 0, ie = materials.size(); i != ie; ++i) {
-			//	m_materials[materials[i].Tag()] = ParseMaterial(materials[i]);
-			//}
+			ParseOutput(m_file["output"]);
 
 			// objects are stored in array
 			YAML::Node objects = m_file["objects"];
@@ -108,6 +99,14 @@ namespace art {
 				camera["focus distance"].as<float>(),
 				camera["background"].as<glm::vec3>()
 			);
+		}
+
+		void ParseOutput(const YAML::Node &image) {
+			m_renderImage = new Image(
+				image["width"].as<int>(),
+				image["height"].as<int>()
+			);
+			m_outputFileName = m_file["output"]["file name"].as<std::string>();
 		}
 
 		Hittable* ParseObject(const YAML::Node &object) {
@@ -249,8 +248,10 @@ namespace art {
 		std::unordered_map<std::string, Material*> m_materials;
 		std::vector<Hittable*> m_objects;
 
-		Camera m_camera;
-		Scene  m_scene;
+		std::string m_outputFileName;
+		Image      *m_renderImage;
+		Camera      m_camera;
+		Scene       m_scene;
 	};
 
 }

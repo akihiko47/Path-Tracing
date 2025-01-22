@@ -10,17 +10,16 @@
 
 
 int main() {
-    art::Image image{512, 288};
     art::SceneParser parser{"light"};
 
     {
         art::Timer timer{"Rendering"};
-        parser.GetCamera()->Render(image, *parser.GetScene());
+        parser.GetCamera().Render(parser.GetImage(), parser.GetScene());
     }
 
     {
         art::Timer timer{"Saving"};
-        image.SaveAsPng("test");
+        parser.GetImage().SaveAsPng(parser.GetOutputFileName());
     }
 
     return 0;
