@@ -5,20 +5,20 @@
 
 namespace art {
 
-	inline float Random() {
+	float Random() {
 		return std::rand() / (RAND_MAX + 1.0);
 	}
 
-	inline float Random(float min, float max) {
+	float Random(float min, float max) {
 		return min + (max - min) * Random();
 	}
 
-	inline glm::vec2 RandomInSquare() {
+	glm::vec2 RandomInSquare() {
 		// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 		return glm::vec2(art::Random() - 0.5, art::Random() - 0.5);
 	}
 
-	inline glm::vec2 RandomInStratifiedSquare(uint32_t s_i, uint32_t s_j, float regionSize) {
+	glm::vec2 RandomInStratifiedSquare(uint32_t s_i, uint32_t s_j, float regionSize) {
 		// Returns the vector to a random point in the stratified region
 		// of unit square
 		return glm::vec2(
@@ -27,8 +27,14 @@ namespace art {
 		);
 	}
 
-	inline glm::vec3 RandomVec() {
-		return glm::normalize(glm::vec3(Random() - 0.5, Random() - 0.5, Random() - 0.5));
+	glm::vec3 RandomVec() {
+		while (true) {
+			glm::vec3 v = glm::vec3(Random(-1, 1), Random(-1, 1), Random(-1, 1));
+			float lensq = glm::dot(v, v);
+			if (1e-160 < lensq && lensq <= 1) {
+				return v / std::sqrt(lensq);
+			}
+		}
 	}
 
 	glm::vec3 RandomOnHemisphere(const glm::vec3 &N) {
@@ -41,7 +47,11 @@ namespace art {
 	}
 
 	glm::vec3 RandomOnDisk() {
-		return glm::normalize(glm::vec3(Random() - 0.5, Random() - 0.5, 0));
+		while (true) {
+			auto p = glm::vec3(Random(-1, 1), Random(-1, 1), 0);
+			if (glm::dot(p, p) < 1)
+				return p;
+		}
 	}
 
 	bool VecNearZero(const glm::vec3& v) {

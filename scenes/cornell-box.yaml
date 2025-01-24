@@ -6,7 +6,7 @@ output:
 
 camera:
     samples: 100
-    bounces: 8
+    bounces: 10
     position: [278, 278, -800]
     look at: [278, 278, 0]
     fov: 40
@@ -84,15 +84,4 @@ objects:
         v: [0,555,0]
         material: white
 
-    sphere:
-        type: sphere
-        position: [388, 100, 388]
-        radius: 100
-        material: metal
-
-    sphere:
-        type: sphere
-        position: [166, 100, 166]
-        radius: 100
-        material: glass
 ...
