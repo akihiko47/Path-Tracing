@@ -84,4 +84,15 @@ objects:
         v: [0,555,0]
         material: white
 
+    sphere:
+        type: sphere
+        position: [388, 100, 388]
+        radius: 100
+        material: metal
+
+    sphere:
+        type: sphere
+        position: [166, 100, 166]
+        radius: 100
+        material: glass
 ...
