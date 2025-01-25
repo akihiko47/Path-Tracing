@@ -67,7 +67,7 @@ namespace art {
 
 			// multi-threading
 			uint32_t width = image.GetWidth();
-			uint32_t height = image.GetWidth();
+			uint32_t height = image.GetHeight();
 			m_iteratorV.resize(width);
 			for (uint32_t i = 0; i < height; i++) {
 				m_iteratorV[i] = i;
