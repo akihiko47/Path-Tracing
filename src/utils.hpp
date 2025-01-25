@@ -5,28 +5,38 @@
 
 namespace art {
 
-	float Random() {
+	// Generate random number in range [0, 1)
+	inline float Random() {
 		return std::rand() / (RAND_MAX + 1.0);
 	}
 
-	float Random(float min, float max) {
+	inline float Random(float min, float max) {
 		return min + (max - min) * Random();
 	}
 
-	glm::vec2 RandomInSquare() {
-		// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+	// Returns random point in the [-0.5, -0.5]-[0.5, 0.5] unit square.
+	inline glm::vec2 RandomInSquare() {
 		return glm::vec2(art::Random() - 0.5, art::Random() - 0.5);
 	}
 
+	// Random value from normal distribution (range is infinite)
+	float RandomNormalDistribution() {
+		float theta = 2 * art::pi * Random();
+		float rho = std::sqrt(-2 * std::log(Random()));
+		return rho * std::cos(theta);
+	}
+
+	// Returns vector to a random point in the stratified region of unit square
 	glm::vec2 RandomInStratifiedSquare(uint32_t s_i, uint32_t s_j, float regionSize) {
-		// Returns the vector to a random point in the stratified region
-		// of unit square
 		return glm::vec2(
 			((s_i + Random()) * regionSize) - 0.5,
 			((s_j + Random()) * regionSize) - 0.5
 		);
 	}
 
+	// Get random unit vector
+	// this funcion uses simple rejection sampling
+	// i tried Gaussian distribution but it was slower
 	glm::vec3 RandomVec() {
 		while (true) {
 			glm::vec3 v = glm::vec3(Random(-1, 1), Random(-1, 1), Random(-1, 1));

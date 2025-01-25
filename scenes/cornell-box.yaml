@@ -10,19 +10,46 @@ camera:
     position: [278, 278, -800]
     look at: [278, 278, 0]
     fov: 40
+
+textures:
+    white-tex:
+        type: color
+        color: [0.93, 0.93, 0.93]
+
+    black-tex:
+        type: color
+        color: [0.33, 0.33, 0.33]
+
+    checker:
+        type: checker
+        scale: 0.01
+        texture 1: white-tex
+        texture 2: black-tex
     
 materials:
-    red:
-        type: plastic
-        albedo: [0.65, 0.05, 0.05]
-
     white:
         type: plastic
-        albedo: [0.73, 0.73, 0.73]
+        albedo: white-tex
 
+    black:
+        type: plastic
+        albedo: black-tex
+
+    floor:
+        type: plastic
+        albedo: checker
+
+    red:
+        type: plastic
+        albedo: [0.89, 0.26, 0.38]
+    
     green:
         type: plastic
-        albedo: [0.12, 0.45, 0.15]
+        albedo: [0.62, 0.90, 0.30]
+
+    blue:
+        type: plastic
+        albedo: [0.27, 0.49, 0.84]
 
     light:
         type: light
@@ -47,7 +74,7 @@ objects:
         q: [555,0,0]
         u: [0,555,0]
         v: [0,0,555]
-        material: green
+        material: blue
 
     right wall:
         type: quad
@@ -68,7 +95,7 @@ objects:
         q: [0,0,0]
         u: [555,0,0]
         v: [0,0,555]
-        material: white
+        material: floor
 
     ceiling:
         type: quad
@@ -83,6 +110,14 @@ objects:
         u: [555,0,0]
         v: [0,555,0]
         material: white
+
+    front wall:
+        type: quad
+        q: [0,0,0]
+        u: [0,555,0]
+        v: [555,0,0]
+        material: white
+        one side: true
 
     sphere:
         type: sphere

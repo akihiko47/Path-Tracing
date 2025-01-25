@@ -32,7 +32,7 @@ namespace art {
 			m_textureAlbedo(albedo) {}
 
 		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
-			glm::vec3 scatterDir = hitInfo.N + RandomVec();
+			glm::vec3 scatterDir = glm::normalize(hitInfo.N + RandomVec());
 
 			if (VecNearZero(scatterDir)) {
 				scatterDir = hitInfo.N;

@@ -109,7 +109,13 @@ namespace art {
 
 	class Quad : public Hittable {
 	public:
-		Quad(const glm::vec3 &Q, const glm::vec3 &u, const glm::vec3 &v, Material *mat) : m_Q(Q), m_u(u), m_v(v), m_mat(mat) {
+		Quad(const glm::vec3 &Q, const glm::vec3 &u, const glm::vec3 &v, Material *mat, bool oneSided) : 
+				m_Q(Q),
+				m_u(u), 
+				m_v(v), 
+				m_mat(mat),
+				m_oneSided(oneSided) 
+		{
 			glm::vec3 n = glm::cross(u, v);
 			m_N = glm::normalize(n);
 			m_D = glm::dot(m_N, Q);
@@ -119,8 +125,10 @@ namespace art {
 		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {
 			float denom = glm::dot(m_N, r.GetDirection());
 
-			// if ray is parallel to plane
-			if (std::fabs(denom) < 1e-8) {
+			// if ray is parallel to plane or opposite side
+			if (denom < 1e-8 && m_oneSided) {
+				return false;
+			} else if (std::fabs(denom) < 1e-8) {
 				return false;
 			}
 
@@ -168,6 +176,7 @@ namespace art {
 		glm::vec3 m_u;
 		glm::vec3 m_v;
 		Material *m_mat;
+		bool      m_oneSided;
 
 		glm::vec3 m_N, m_w;
 		float m_D;

@@ -142,7 +142,8 @@ namespace art {
 					object["q"].as<glm::vec3>(),
 					object["u"].as<glm::vec3>(),
 					object["v"].as<glm::vec3>(),
-					ParseMaterial(object["material"].as<std::string>())
+					ParseMaterial(object["material"].as<std::string>()),
+					object["one side"] ? object["one side"].as<bool>() : false
 				);
 			} else {
 				std::cerr << "incorrect object type - " << object["type"].as<std::string>() << "\n";
@@ -157,7 +158,6 @@ namespace art {
 
 			// check if material with that name already in map
 			if (m_materials.find(materialName) != m_materials.end()) {
-				std::cout << "material" << materialName << "already exists\n";
 				return m_materials[materialName];
 			}
 
@@ -234,7 +234,6 @@ namespace art {
 
 			// check if material with that name already in map
 			if (m_textures.find(textureName) != m_textures.end()) {
-				std::cout << "texture" << textureName << "already exists\n";
 				return m_textures[textureName];
 			}
 
