@@ -23,31 +23,47 @@ namespace art {
 
 	class Lambertian : public Material {
 	public:
-		Lambertian(const glm::vec3 &albedo) : 
+		Lambertian(const glm::vec3 &albedo, float smoothness, float specularProbability) : 
 			m_albedo(albedo),
-			m_textureAlbedo(nullptr) {}
+			m_textureAlbedo(nullptr),
+			m_smoothness(smoothness),
+			m_specularProbability(specularProbability) {}
 
-		Lambertian(const Texture *albedo) :
+		Lambertian(const Texture *albedo, float smoothness, float specularProbability) :
 			m_albedo(glm::vec3(1)),
-			m_textureAlbedo(albedo) {}
+			m_textureAlbedo(albedo),
+			m_smoothness(smoothness),
+			m_specularProbability(specularProbability) {}
 
 		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
-			glm::vec3 scatterDir = glm::normalize(hitInfo.N + RandomVec());
 
-			if (VecNearZero(scatterDir)) {
-				scatterDir = hitInfo.N;
+			glm::vec3 diffuseDir = glm::normalize(hitInfo.N + RandomVec());
+			glm::vec3 reflectDir = glm::reflect(rayIn.GetDirection(), hitInfo.N);
+
+			if (VecNearZero(diffuseDir)) {
+				diffuseDir = hitInfo.N;
 			}
 
-			rayOut = Ray(hitInfo.p, scatterDir);
+			bool isSpecularBounce = m_specularProbability >= Random();
 
-			attenuation = m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p) : m_albedo;
-			
+			glm::vec3 dir = glm::mix(diffuseDir, reflectDir, m_smoothness * isSpecularBounce);
+
+			attenuation = glm::mix(
+				m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p) : m_albedo,
+				glm::vec3(1),
+				isSpecularBounce
+			);
+
+			rayOut = Ray(hitInfo.p, dir);
+
 			return true;
 		}
 
 	private:
 		glm::vec3      m_albedo;
 		const Texture *m_textureAlbedo;
+		float          m_smoothness;
+		float          m_specularProbability;
 	};
 
 

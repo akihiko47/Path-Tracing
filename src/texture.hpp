@@ -63,8 +63,8 @@ namespace art {
 			u = std::modf(u, &ip);
 			v = 1.0 - std::modf(v, &ip);  // reversing y
 
-			uint32_t px = u * m_image.GetWidth();
-			uint32_t py = v * m_image.GetHeight();
+			uint32_t px = u * (m_image.GetWidth() - 1);
+			uint32_t py = v * (m_image.GetHeight() - 1);
 			return m_image.GetPixelColor(px, py);
 		}
 

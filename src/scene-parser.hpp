@@ -171,11 +171,15 @@ namespace art {
 
 				if (material["albedo"].IsSequence()) {
 					result = new Lambertian(
-						material["albedo"].as<glm::vec3>()
+						material["albedo"].as<glm::vec3>(),
+						material["smoothness"] ? material["smoothness"].as<float>() : 0.0,
+						material["specular probability"] ? material["specular probability"].as<float>() : 0.0
 					);
 				} else {
 					result = new Lambertian(
-						ParseTexture(material["albedo"].as<std::string>())
+						ParseTexture(material["albedo"].as<std::string>()),
+						material["smoothness"] ? material["smoothness"].as<float>() : 0.0,
+						material["specular probability"] ? material["specular probability"].as<float>() : 0.0
 					);
 				}
 			} else if (type == "metal") {

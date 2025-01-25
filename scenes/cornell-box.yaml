@@ -25,6 +25,10 @@ textures:
         scale: 4.0
         texture 1: white-tex
         texture 2: black-tex
+
+    image-tex:
+        type: image
+        file name: travertine.png
     
 materials:
     white:
@@ -63,8 +67,26 @@ materials:
 
     metal:
         type: metal
-        albedo: [1.0, 1.0, 1.0]
+        albedo: [0.8, 0.8, 0.8]
         smoothness: 1.0
+
+    plastic smooth:
+        type: plastic
+        albedo: [1.0, 0.0, 0.0]
+        smoothness: 1.0
+        specular probability: 0.4
+
+    plastic matte:
+        type: plastic
+        albedo: [1.0, 1.0, 1.0]
+        smoothness: 0.3
+        specular probability: 0.2
+
+    travertine:
+        type: plastic
+        albedo: image-tex
+        smoothness: 1.0
+        specular probability: 0.2
 
     
 
@@ -119,5 +141,34 @@ objects:
         v: [0,0,0.6]
         material: light
 
+    sphere top left:
+        type: sphere
+        position: [-0.5, 1.5, 0.0]
+        radius: 0.3
+        material: plastic smooth
+
+    sphere top right:
+        type: sphere
+        position: [0.5, 1.5, 0.0]
+        radius: 0.3
+        material: plastic matte
+
+    sphere middle:
+        type: sphere
+        position: [0.0, 1.0, 0.0]
+        radius: 0.3
+        material: travertine
+
+    sphere bottom left:
+        type: sphere
+        position: [-0.5, 0.5, 0.0]
+        radius: 0.3
+        material: glass
+
+    sphere bottom right:
+        type: sphere
+        position: [0.5, 0.5, 0.0]
+        radius: 0.3
+        material: metal
 
 ...
