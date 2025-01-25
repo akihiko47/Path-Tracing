@@ -2,11 +2,15 @@
 
 #include <iostream> // output
 #include <iomanip>  // formatting output
+#include <vector>
+#include <thread>
+#include <execution>
 
 #include "hittable.hpp"
 #include "image.hpp"
 #include "utils.hpp"
 #include "material.hpp"
+#include "scene.hpp"
 
 namespace art {
 	class Camera final {
@@ -32,7 +36,7 @@ namespace art {
 			m_focusDist(focusDist),
 			m_background(background) {}
 
-		void Render(Image &image, const Hittable &scene) const {
+		void Render(Image &image, const Scene &scene) const {
 			// camera
 			float h = std::tan(glm::radians(m_fov) / 2);
 			float viewportHeight = 2 * h * m_focusDist;
@@ -61,11 +65,39 @@ namespace art {
 			stratNumRow = static_cast<int>(std::sqrt(m_nSamples));
 			stratRegionEdgeLength = 1.0 / stratNumRow;
 
+			// multi-threading
+			uint32_t width = image.GetWidth();
+			uint32_t height = image.GetWidth();
+			m_iteratorV.resize(width);
+			for (uint32_t i = 0; i < height; i++) {
+				m_iteratorV[i] = i;
+			}
+
 			// pre compute
 			float pixel_scale = 1.0f / (stratNumRow * stratNumRow);
 
 			std::clog << "Starting to render...\n" << std::flush;
 
+#define MT 0
+#if MT
+			std::for_each(std::execution::par, m_iteratorV.begin(), m_iteratorV.end(),
+				[this, image, pixel_scale, scene](uint32_t j) {
+
+				for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
+
+					glm::vec3 pixelColor(0);
+					for (uint32_t s_j = 0; s_j < stratNumRow; s_j++) {
+						for (uint32_t s_i = 0; s_i < stratNumRow; s_i++) {
+							art::Ray r = GetRay(i, j, s_i, s_j);
+							pixelColor += RayColor(r, m_maxDepth, scene);
+						}
+					}
+
+					const_cast<Image&>(image).SetPixelColor(i, j, pixelColor * pixel_scale);
+				}
+			}
+			);
+#else
 			for (uint32_t j = 0, je = image.GetHeight(); j != je; ++j) {
 				std::clog << std::setprecision(2) << "\tProgress: " << int((float(j) / float(image.GetHeight())) * 100) << "%" << '\n' << std::flush;
 				for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
@@ -81,6 +113,7 @@ namespace art {
 					image.SetPixelColor(i, j, pixelColor * pixel_scale);
 				}
 			}
+#endif
 		}
 
 	private:
@@ -148,5 +181,7 @@ namespace art {
 		mutable int stratNumRow;              // number of stratification regions in pixel row
 		mutable float stratRegionEdgeLength;  // edge length of each stratification region
 
+		// multi-threading
+		mutable std::vector<uint32_t> m_iteratorV;
 	};
 }

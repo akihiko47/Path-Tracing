@@ -25,7 +25,7 @@ namespace art {
 		}
 
 		const Camera      &GetCamera()         const { return m_camera; }
-		const Hittable    &GetScene()          const { return m_scene; }
+		const Scene       &GetScene()          const { return m_scene; }
 		      Image       &GetImage()                { return *m_renderImage; }  // not const because we need to render to it
 		const std::string &GetOutputFileName() const { return m_outputFileName; }
 

@@ -37,7 +37,7 @@ namespace art {
 
 		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 
-			glm::vec3 diffuseDir = glm::normalize(hitInfo.N + RandomVec());
+			glm::vec3 diffuseDir = hitInfo.N + RandomVec();
 			glm::vec3 reflectDir = glm::reflect(rayIn.GetDirection(), hitInfo.N);
 
 			if (VecNearZero(diffuseDir)) {
