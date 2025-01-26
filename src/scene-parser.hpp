@@ -246,11 +246,11 @@ namespace art {
 
 			std::string type = texture["type"].as<std::string>();
 
-			if (type == "color") {
-				ErrorCheck(texture, "color");
+			if (type == "albedo") {
+				ErrorCheck(texture, "albedo");
 
 				result = new SolidColorTexture(
-					texture["color"].as<glm::vec3>()
+					texture["albedo"].as<glm::vec3>()
 				);
 			} else if (type == "image") {
 				ErrorCheck(texture, "file name");

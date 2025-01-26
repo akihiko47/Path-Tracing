@@ -29,14 +29,20 @@ int main(int argc, char *argv[]) {
 
     art::SceneParser parser{std::string(argv[1])};
 
+    art::Camera camera      = parser.GetCamera();
+    art::Image  renderImage = parser.GetImage();
+    art::Scene  scene       = parser.GetScene();
+    std::string outputName  = parser.GetOutputFileName();
+
+
     {
         art::Timer timer{"Rendering"};
-        parser.GetCamera().Render(parser.GetImage(), parser.GetScene());
+        camera.Render(renderImage, scene);
     }
 
     {
         art::Timer timer{"Saving"};
-        parser.GetImage().SaveAsPng(parser.GetOutputFileName());
+        renderImage.SaveAsPng(outputName);
     }
 
     return 0;
