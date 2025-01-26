@@ -38,7 +38,6 @@ int main(int argc, char *argv[]) {
     art::Scene  scene       = parser.GetScene();
     std::string outputName  = parser.GetOutputFileName();
 
-
     // scopes are created for scoped timers
     {
         art::Timer timer{"Rendering"};
@@ -50,7 +49,9 @@ int main(int argc, char *argv[]) {
         renderImage.SaveAsPng(outputName);
     }
 
-    // only here it is safe to delete scene parser object
+    // only here it is safe to delete scene parser
+    // but this will break other variables
+    // so please don't do it
 
     return 0;
 }
