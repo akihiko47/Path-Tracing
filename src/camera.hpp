@@ -66,9 +66,8 @@ namespace art {
 			stratRegionEdgeLength = 1.0 / stratNumRow;
 
 			// multi-threading
-			uint32_t width = image.GetWidth();
 			uint32_t height = image.GetHeight();
-			m_iteratorV.resize(width);
+			m_iteratorV.resize(height);
 			for (uint32_t i = 0; i < height; i++) {
 				m_iteratorV[i] = i;
 			}
@@ -78,24 +77,29 @@ namespace art {
 
 			std::clog << "Starting to render...\n" << std::flush;
 
-#define MT 0
+#define MT 1
 #if MT
 			std::for_each(std::execution::par, m_iteratorV.begin(), m_iteratorV.end(),
-				[this, image, pixel_scale, scene](uint32_t j) {
+				[&](uint32_t j) {
 
-				for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
+					for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
 
-					glm::vec3 pixelColor(0);
-					for (uint32_t s_j = 0; s_j < stratNumRow; s_j++) {
-						for (uint32_t s_i = 0; s_i < stratNumRow; s_i++) {
-							art::Ray r = GetRay(i, j, s_i, s_j);
-							pixelColor += RayColor(r, m_maxDepth, scene);
+						glm::vec3 pixelColor(0);
+						for (uint32_t s_j = 0; s_j < stratNumRow; s_j++) {
+							for (uint32_t s_i = 0; s_i < stratNumRow; s_i++) {
+								art::Ray r = GetRay(i, j, s_i, s_j);
+								pixelColor += RayColor(r, m_maxDepth, scene);
+							}
 						}
+
+						image.SetPixelColor(i, j, pixelColor * pixel_scale);
 					}
 
-					const_cast<Image&>(image).SetPixelColor(i, j, pixelColor * pixel_scale);
+					std::stringstream msg;
+					msg << "Row " << j << "/" << height << " done\n";
+					std::cout << msg.str();
+
 				}
-			}
 			);
 #else
 			for (uint32_t j = 0, je = image.GetHeight(); j != je; ++j) {

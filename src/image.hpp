@@ -15,17 +15,23 @@
 namespace art {
     class Image final {
     public:
-        Image() : m_width(64), m_height(64), m_numChannels(3), m_stbImpl(false) {
+        Image() : m_height(0), m_width(0), m_numChannels(0), m_data(nullptr) { }
+
+        Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : m_width(width), m_height(height), m_numChannels(nChannels) {
             m_data = new uint8_t[m_width * m_height * m_numChannels];
         }
-        Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : m_width(width), m_height(height), m_numChannels(nChannels), m_stbImpl(false) {
-            m_data = new uint8_t[m_width * m_height * m_numChannels];
+
+        Image(const std::string &filename) { 
+            LoadFromFile(filename); 
         }
-        Image(const std::string &filename) : m_stbImpl(true) { LoadFromFile(filename); }
+
         ~Image() { 
             delete[] m_data; 
         }
 
+        const uint32_t GetWidth()       const { return m_width; }
+        const uint32_t GetHeight()      const { return m_height; }
+        const uint32_t GetNumChannels() const { return m_numChannels; }
 
         glm::vec3 GetPixelColor(uint32_t px, uint32_t py) const {
             // cant sample out of bounds
@@ -53,19 +59,6 @@ namespace art {
             m_data[m_numChannels * (py * m_width + px)]     = ir;
             m_data[m_numChannels * (py * m_width + px) + 1] = ig;
             m_data[m_numChannels * (py * m_width + px) + 2] = ib;
-        }
-
-        glm::vec3 LinearToGamma(glm::vec3 linearColor) {
-            if (linearColor.r > 0) {
-                linearColor.r = std::sqrt(linearColor.r);
-            }
-            if (linearColor.g > 0) {
-                linearColor.g = std::sqrt(linearColor.g);
-            }
-            if (linearColor.b > 0) {
-                linearColor.b = std::sqrt(linearColor.b);
-            }
-            return linearColor;
         }
 
         void SaveAsPng(const std::string &name) const {
@@ -109,9 +102,18 @@ namespace art {
             m_height = texHeight;
         }
 
-        const uint32_t GetWidth()       const { return m_width; }
-        const uint32_t GetHeight()      const { return m_height; }
-        const uint32_t GetNumChannels() const { return m_numChannels; }
+        glm::vec3 LinearToGamma(glm::vec3 linearColor) const {
+            if (linearColor.r > 0) {
+                linearColor.r = std::sqrt(linearColor.r);
+            }
+            if (linearColor.g > 0) {
+                linearColor.g = std::sqrt(linearColor.g);
+            }
+            if (linearColor.b > 0) {
+                linearColor.b = std::sqrt(linearColor.b);
+            }
+            return linearColor;
+        }
 
     private:
         uint8_t *m_data;
@@ -119,7 +121,5 @@ namespace art {
         uint32_t m_width;
         uint32_t m_height;
         uint8_t  m_numChannels;
-
-        bool m_stbImpl;
     };
 }
