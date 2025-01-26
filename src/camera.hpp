@@ -75,7 +75,8 @@ namespace art {
 			// pre compute
 			float pixel_scale = 1.0f / (stratNumRow * stratNumRow);
 
-			std::clog << "Starting to render...\n" << std::flush;
+			// main loop
+			std::cout << "Starting to render...\n" << std::flush;
 
 #define MT 1
 #if MT
@@ -96,14 +97,14 @@ namespace art {
 					}
 
 					std::stringstream msg;
-					msg << "Row " << j << "/" << height << " done\n";
+					msg << "\tRow " << j << "/" << height << " done\n";
 					std::cout << msg.str();
 
 				}
 			);
 #else
 			for (uint32_t j = 0, je = image.GetHeight(); j != je; ++j) {
-				std::clog << std::setprecision(2) << "\tProgress: " << int((float(j) / float(image.GetHeight())) * 100) << "%" << '\n' << std::flush;
+				std::cout << std::setprecision(2) << "\tProgress: " << int((float(j) / float(image.GetHeight())) * 100) << "%" << '\n' << std::flush;
 				for (uint32_t i = 0, ie = image.GetWidth(); i != ie; ++i) {
 
 					glm::vec3 pixelColor(0);

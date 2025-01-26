@@ -1,13 +1,15 @@
 #pragma once
 
 #include <cstdlib>
-
+#include <random>
 
 namespace art {
 
 	// Generate random number in range [0, 1)
 	inline float Random() {
-		return std::rand() / (RAND_MAX + 1.0);
+		static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+		static std::mt19937 generator;
+		return distribution(generator);
 	}
 
 	inline float Random(float min, float max) {

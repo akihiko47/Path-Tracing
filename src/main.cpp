@@ -9,8 +9,25 @@
 #include "scene-parser.hpp"
 
 
-int main() {
-    art::SceneParser parser{"cornell-box"};
+void ShowTutorial() {
+    std::cout << "\n=== Akihiko Path Tracer ===\n\n";
+    std::cout << "Usage:   ./PathTracing <scene-name>\n";
+    std::cout << "Example: ./PathTracing cornell-box\n\n";
+    std::cout << "None: default search directory is 'project-root/scenes/'\n";
+    std::cout << "(but you can specify absolute path to yaml scene file)\n";
+    std::cout << "Resulting image will be saved in 'project-root/output/'\n";
+    std::cout << "\n===========================\n\n";
+}
+
+
+int main(int argc, char *argv[]) {
+
+    if (argc != 2) {
+        ShowTutorial();
+        return 0;
+    }
+
+    art::SceneParser parser{std::string(argv[1])};
 
     {
         art::Timer timer{"Rendering"};

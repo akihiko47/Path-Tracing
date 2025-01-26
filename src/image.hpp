@@ -3,6 +3,10 @@
 #include <iostream> 
 #include <filesystem>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -35,7 +39,7 @@ namespace art {
 
         glm::vec3 GetPixelColor(uint32_t px, uint32_t py) const {
             // cant sample out of bounds
-            if (!(0 <= px <= m_width) || !(0 <= px <= m_height)) {
+            if (!(0 <= px && px <= m_width) || !(0 <= px && px <= m_height)) {
                 std::cerr << "cant get x = " << px << ", y = " << py << " from image with width = " << m_width << ", height = " << m_height << "\n";
                 return glm::vec3(1, 0, 1);
             }
@@ -71,6 +75,10 @@ namespace art {
 
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
             assert(res != 0);
+
+#ifdef _WIN32
+            ShellExecute(NULL, "open", filePath.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+#endif
         }
 
         void LoadFromFile(const std::string &filename) {
