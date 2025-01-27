@@ -7,7 +7,9 @@ namespace art {
 
 	// Generate random number in range [0, 1)
 	inline float Random() {
-		return std::rand() / (RAND_MAX + 1.0);
+		static thread_local std::mt19937 generator(std::random_device{}());
+		std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+		return distribution(generator);
 	}
 
 	inline float Random(float min, float max) {

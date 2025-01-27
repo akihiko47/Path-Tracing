@@ -18,6 +18,7 @@ namespace art {
 	// it must allocate and deallocate textures, materials and objects
 	class SceneParser final {
 	public:
+		SceneParser() = delete;
 		SceneParser(const std::string &filename) { PopulateScene(filename); }
 
 		~SceneParser() {
