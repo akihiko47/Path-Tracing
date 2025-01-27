@@ -27,16 +27,16 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    // this parser is owner of everyting in scene (textures, materials, objects)
+    // this parser is owner of everyting in scene (textures, materials, objects) as well as render image
     // all the variables below are refs to instances owned by scene parser
     // if this object gets destroyed before the end of rendering then program will have undefined behavior !
     art::SceneParser parser{std::string(argv[1])};
 
     // get refs (these objects are owned by parser)
-    art::Camera camera      = parser.GetCamera();
-    art::Image  renderImage = parser.GetImage();
-    art::Scene  scene       = parser.GetScene();
-    std::string outputName  = parser.GetOutputFileName();
+    const art::Camera &camera      = parser.GetCamera();
+          art::Image  &renderImage = parser.GetImage();
+    const art::Scene  &scene       = parser.GetScene();
+    const std::string &outputName  = parser.GetOutputFileName();
 
     // scopes are created for scoped timers
     {
