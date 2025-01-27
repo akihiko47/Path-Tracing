@@ -22,6 +22,6 @@ mkdir build
 cd build/
 cmake ..
 ```
-Compilation files will be in `build/` folder. 
-After that you can use `make` to launch solution in `Visual Studio`. 
+Build files will be in `build/` folder. 
+After that you can use `make` or launch solution in `Visual Studio`. 
 Alternatively, you can use cmake `cmake --build .` to build this project.
