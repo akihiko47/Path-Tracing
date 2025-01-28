@@ -1,0 +1,133 @@
+---
+# =================================================
+#    Look at example.yaml scene for explanation
+# =================================================
+
+# parameters of output image
+# this image will be saved in 'output/' directory
+output:
+    width: 1000
+    height: 300
+    file name: pillars-scene
+
+
+# camera only needs first 4 parameters
+# others can be omitted
+camera:
+    samples: 4800
+    bounces: 10
+    position: [0, 1, 2]
+    look at: [0, 1, 0]
+    fov: 35
+    background: [0.0, 0.0, 0.0]
+
+
+# all textures here
+# we need those for materials
+# note that we can use one texture for multiple materials
+textures:
+    odd:
+        type: albedo
+        albedo: [0.93, 0.93, 0.93]
+
+    even:
+        type: albedo
+        albedo: [0.23, 0.23, 0.23]
+
+    # checker board pattern texture
+    # scale is responsible for size of squares
+    checker:
+        type: checker
+        scale: 4.0
+        texture 1: odd
+        texture 2: even
+
+    # only png format is supported
+    # default search directory is 'textures/' folder
+    image-tex:
+        type: image
+        file name: wood.png
+
+
+# all meterials here
+# we need materials to create objects
+# some materials require textures
+materials:
+    ground:
+        type: plastic
+        albedo: odd
+
+    floor:
+        type: plastic
+        albedo: checker            # can use checker texture as albedo
+        smoothness: 1.0            # [optional] [default = 0]
+        specular probability: 0.5  # [optional] [default = 0]
+    
+    mirror:
+        type: metal
+        albedo: [0.5, 0.5, 0.5]  
+        smoothness: 1.0            # [optional] [default = 0]
+
+    wood:
+        type: plastic
+        albedo: image-tex   
+        smoothness: 0.7             # [optional] [default = 0]
+        specular probability: 0.02  # [optional] [default = 0]
+
+    light:
+        type: light
+        albedo: [6, 5, 4]
+
+
+# all objects here (spheres and quads)
+# objects requre materials names
+objects:
+
+    # quads are described like this:
+    # q -----> V
+    # |
+    # |        |   
+    # |         
+    # U    -   +
+
+    left wall:
+        type: quad
+        q: [0,-2,-3]
+        u: [2,0,5]
+        v: [0,6,0]
+        material: mirror
+
+    right wall:
+        type: quad
+        q: [0,-2,-3]
+        u: [-2,0,5]
+        v: [0,6,0]
+        material: mirror
+
+    ceiling:
+        type: quad
+        q: [-3,2,-0.5]
+        u: [6,0,0]
+        v: [0,0,0.5]
+        material: light
+
+    floor:
+        type: quad
+        q: [-3,0,-1]
+        u: [6,0,0]
+        v: [0,0,2]
+        material: floor
+
+    ground:
+        type: quad
+        q: [-100,-0.5,-100]
+        u: [200,0,0]
+        v: [0,0,200]
+        material: ground
+
+    sphere 1:
+        type: sphere
+        position: [0.0, 1.0, 0.0]
+        radius: 0.4
+        material: wood
+...

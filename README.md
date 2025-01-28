@@ -1,5 +1,5 @@
 # Simple Path Tracer
-> image here
+![banner](output/banner.png)
 
 This multithreaded ray tracer supports scenes described with [YAML](https://yaml.org/). 
 This format is human-readable, which makes it easy to modify and create new scenes 
