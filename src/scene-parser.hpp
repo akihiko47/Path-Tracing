@@ -124,7 +124,10 @@ namespace art {
 		Material* ParseMaterial(std::string materialName, Scene &scene) {
 			std::unique_ptr<Material> result;
 
-			// check if material with that name already in map !TO DO
+			// check if material with that name already created
+			if (m_parsedMaterials.find(materialName) != m_parsedMaterials.end()) {
+				return m_parsedMaterials[materialName];
+			}
 
 			ErrorCheck(m_file, "materials");
 			YAML::Node materials = m_file["materials"];
@@ -191,12 +194,18 @@ namespace art {
 			}
 
 			Material *ptr = result.get();
+			m_parsedMaterials[materialName] = ptr;
 			scene.AddMaterial(std::move(result));
 			return ptr;
 		}
 
 		Texture* ParseTexture(std::string textureName, Scene &scene) {
 			std::unique_ptr<Texture> result;
+
+			// check if texture with that name already created
+			if (m_parsedTextures.find(textureName) != m_parsedTextures.end()) {
+				return m_parsedTextures[textureName];
+			}
 
 			ErrorCheck(m_file, "textures");
 			YAML::Node textures = m_file["textures"];
@@ -231,6 +240,7 @@ namespace art {
 			}
 
 			Texture *ptr = result.get();
+			m_parsedTextures[textureName] = ptr;
 			scene.AddTexture(std::move(result));
 			return ptr;
 		}
@@ -243,6 +253,11 @@ namespace art {
 		}
 
 		YAML::Node m_file;
+
+		// need these containers to check if parsed object already exists
+		// Scene object is owner of these, so we dont delete them in destructor
+		std::unordered_map<std::string, Material*> m_parsedMaterials;
+		std::unordered_map<std::string, Texture*> m_parsedTextures;
 	};
 
 }
