@@ -1,7 +1,7 @@
 # Simple Path Tracer
 ![banner](output/banner.png)
 
-This multithreaded ray tracer supports scenes described with [YAML](https://yaml.org/). 
+Multithreaded ray tracer with [YAML](https://yaml.org/) scenes description. 
 This format is human-readable, which makes it easy to modify and create new scenes 
 (more on how to do it below). It should be noted that this tracer is rather inefficient, 
 it does not support structures such as BVH or KD-trees, so rendering models will not be a good idea. 
