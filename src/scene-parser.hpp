@@ -85,6 +85,11 @@ namespace art {
 				#endif
 			}
 
+			if (!std::filesystem::exists(filePath)) {
+				std::cerr << "parsing error! No such file: " << filePath << "\n";
+				exit(1);
+			}
+
 			std::cout << "parsing scene " << filePath << "\n";
 			return YAML::LoadFile(filePath);
 		}
@@ -262,7 +267,7 @@ namespace art {
 
 }
 
-
+// operation to parce vec3 from YAML file
 namespace YAML {
 	template<>
 	struct convert<glm::vec3> {
