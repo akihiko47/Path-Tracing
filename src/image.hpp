@@ -19,18 +19,22 @@
 namespace art {
     class Image final {
     public:
-        Image() : m_height(0), m_width(0), m_numChannels(0), m_data(nullptr) { }
+        Image() : m_height(0), m_width(0), m_numChannels(0), m_data(nullptr), m_stbImpl(false) { }
 
-        Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : m_width(width), m_height(height), m_numChannels(nChannels) {
+        Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : m_width(width), m_height(height), m_numChannels(nChannels), m_stbImpl(false) {
             m_data = new uint8_t[m_width * m_height * m_numChannels];
         }
 
-        Image(const std::string &filename) { 
+        Image(const std::string &filename) : m_stbImpl(true) {
             LoadFromFile(filename); 
         }
 
         ~Image() { 
-            delete[] m_data; 
+            if (m_stbImpl) {
+                stbi_image_free(m_data);
+            } else {
+                delete[] m_data;
+            }
         }
 
         const uint32_t GetWidth()       const { return m_width; }
@@ -129,5 +133,7 @@ namespace art {
         uint32_t m_width;
         uint32_t m_height;
         uint8_t  m_numChannels;
+
+        bool     m_stbImpl;
     };
 }
