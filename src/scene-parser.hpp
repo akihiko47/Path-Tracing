@@ -54,7 +54,7 @@ namespace art {
 		std::unique_ptr<Image> GetImage() { 
 			ErrorCheck(m_file, "output");
 
-			YAML::Node image = m_file["image"];
+			YAML::Node image = m_file["output"];
 			ErrorCheck(image, "width");
 			ErrorCheck(image, "height");
 
