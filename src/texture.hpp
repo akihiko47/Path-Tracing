@@ -8,7 +8,7 @@ namespace art {
 	public:
 		virtual ~Texture() = default;
 
-		virtual glm::vec3 Sample(float u, float v, const glm::vec3 &p) const = 0;
+		virtual glm::vec3 Sample(float u, float v, const glm::vec3 &p) const { return glm::vec3(1, 0, 1); }
 	};
 
 
@@ -16,7 +16,7 @@ namespace art {
 	public:
 		SolidColorTexture(const glm::vec3 &albedo) : m_albedo(albedo) {}
 
-		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const override {
+		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const {
 			return m_albedo;
 		}
 
@@ -32,7 +32,7 @@ namespace art {
 			m_evenTexture(evenTexture),
 			m_oddTexture(oddTexture) {}
 
-		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const override {
+		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const {
 			int x = static_cast<int>(std::floor(m_scale * p.x));
 			int y = static_cast<int>(std::floor(m_scale * p.y));
 			int z = static_cast<int>(std::floor(m_scale * p.z));
@@ -56,7 +56,7 @@ namespace art {
 		ImageTexture(const std::string &filename) :
 			m_image(filename) {}
 
-		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const override {
+		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const {
 			float ip;  // dummy parameter for integer part
 
 			// getting fractional part of uv (for repeating)

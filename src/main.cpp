@@ -27,33 +27,31 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    // this parser is owner of everyting in scene (textures, materials, objects) as well as render image
-    // all the variables below are refs to instances owned by scene parser
-    // if this object gets destroyed before the end of rendering then program will have undefined behavior !
-    art::Timer timer{"Scene file parsing"};
+    // this object is responsible only for parsing
+    // it returns needed variables by value
+    // except for image, it is smart pointer so you don't need to delete it
     art::SceneParser parser{std::string(argv[1])};
-    timer.Stop();
 
-    // get refs (these objects are owned by parser)
-    const art::Camera &camera      = parser.GetCamera();
-          art::Image  &renderImage = parser.GetImage();
-    const art::Scene  &scene       = parser.GetScene();
-    const std::string &outputName  = parser.GetOutputFileName();
+    art::Scene                  scene;
+    art::Camera                 camera      = parser.GetCamera();
+    std::unique_ptr<art::Image> renderImage = parser.GetImage();
+    std::string                 outputName  = parser.GetOutputFileName();
 
-    // scopes are created for scoped timers
+
+    {  // scopes are created for scoped timers
+        art::Timer timer{"Scene parsing"};
+        parser.PopulateScene(scene);
+    }
+   
     {
         art::Timer timer{"Rendering"};
-        camera.Render(renderImage, scene);
+        camera.Render(*renderImage, scene);
     }
 
     {
         art::Timer timer{"Saving"};
-        renderImage.SaveAsPng(outputName);
+        renderImage->SaveAsPng(outputName);
     }
-
-    // only here it is safe to delete scene parser
-    // but this will break other variables
-    // so please don't do it
 
     return 0;
 }

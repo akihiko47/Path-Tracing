@@ -36,7 +36,7 @@ namespace art {
 			m_focusDist(focusDist),
 			m_background(background) {}
 
-		void Render(Image &image, const Scene &scene) const {
+		void Render(Image &image, Scene &scene) const {
 			// camera
 			float h = std::tan(glm::radians(m_fov) / 2);
 			float viewportHeight = 2 * h * m_focusDist;

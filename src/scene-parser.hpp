@@ -14,63 +14,63 @@
 
 namespace art {
 
-	// this class is owner of the scene
-	// it must allocate and deallocate textures, materials and objects
 	class SceneParser final {
 	public:
 		SceneParser() = delete;
-		SceneParser(const std::string &filename) { PopulateScene(filename); }
+		SceneParser(const std::string &filename) : m_file(OpenFile(filename)) {}
 
-		~SceneParser() {
-			Cleanup();
-		}
+		void PopulateScene(Scene &scene) {
 
-		const Camera      &GetCamera()         const { return m_camera; }
-		const Scene       &GetScene()          const { return m_scene; }
-		      Image       &GetImage()                { return *m_renderImage; }  // not const because we need to render to it
-		const std::string &GetOutputFileName() const { return m_outputFileName; }
-
-	private:
-
-		void Cleanup() {
-			for (std::unordered_map<std::string, Texture*>::iterator itr = m_textures.begin(); itr != m_textures.end(); itr++) {
-				delete (itr->second);
-			}
-			m_textures.clear();
-
-			for (std::unordered_map<std::string, Material*>::iterator itr = m_materials.begin(); itr != m_materials.end(); itr++) {
-				delete (itr->second);
-			}
-			m_materials.clear();
-
-			for (Hittable *obj : m_objects) {
-				delete obj;
-			}
-			m_objects.clear();
-
-			delete m_renderImage;
-		}
-
-		// get scene description from file
-		void PopulateScene(const std::string &filename) {
-			
-			m_file = OpenFile(filename);
-
-			ParseCamera(m_file["camera"]);
-			ParseOutput(m_file["output"]);
-
-			// objects are stored in array
+			// allocate objects and transfer ownership to scene
+			ErrorCheck(m_file, "objects");
 			YAML::Node objects = m_file["objects"];
 			for (YAML::const_iterator it = objects.begin(); it != objects.end(); ++it) {
 				YAML::Node objectProperties = it->second;
-				m_objects.push_back(ParseObject(objectProperties));
-			}
-
-			// add objects to scene
-			for (Hittable *obj : m_objects) {
-				m_scene.AddObject(obj);
+				ParseObject(objectProperties, scene);
 			}
 		}
+
+		Camera GetCamera() const { 
+			ErrorCheck(m_file, "camera");
+
+			YAML::Node camera = m_file["camera"];
+			ErrorCheck(camera, "samples");
+			ErrorCheck(camera, "bounces");
+			ErrorCheck(camera, "position");
+			ErrorCheck(camera, "look at");
+
+			return Camera(
+				camera["samples"].as<int>(),
+				camera["bounces"].as<int>(),
+				camera["position"].as<glm::vec3>(),
+				camera["look at"].as<glm::vec3>(),
+				camera["fov"] ? camera["fov"].as<float>() : 45,
+				camera["defocus angle"] ? camera["defocus angle"].as<float>() : 0,
+				camera["focus distance"] ? camera["focus distance"].as<float>() : 1,
+				camera["background"] ? camera["background"].as<glm::vec3>() : glm::vec3(0)
+			);
+		}
+
+		std::unique_ptr<Image> GetImage() { 
+			ErrorCheck(m_file, "output");
+
+			YAML::Node image = m_file["image"];
+			ErrorCheck(image, "width");
+			ErrorCheck(image, "height");
+
+			return std::make_unique<Image>(
+				image["width"].as<int>(),
+				image["height"].as<int>()
+			);
+		} 
+
+		const std::string GetOutputFileName() const { 
+			ErrorCheck(m_file, "output");
+			ErrorCheck(m_file["output"], "file name");
+			return m_file["output"]["file name"].as<std::string>();
+		}
+
+	private:
 
 		YAML::Node OpenFile(const std::string &filename) {
 			std::string filePath = filename;
@@ -89,79 +89,44 @@ namespace art {
 			return YAML::LoadFile(filePath);
 		}
 
-		void ParseCamera(const YAML::Node &camera) {
-			ErrorCheck(m_file, "camera");
-			ErrorCheck(camera, "samples");
-			ErrorCheck(camera, "bounces");
-			ErrorCheck(camera, "position");
-			ErrorCheck(camera, "look at");
-
-			m_camera = Camera(
-				camera["samples"].as<int>(),
-				camera["bounces"].as<int>(),
-				camera["position"].as<glm::vec3>(),
-				camera["look at"].as<glm::vec3>(),
-				camera["fov"] ? camera["fov"].as<float>() : 45,
-				camera["defocus angle"] ? camera["defocus angle"].as<float>() : 0,
-				camera["focus distance"] ? camera["focus distance"].as<float>() : 1,
-				camera["background"] ? camera["background"].as<glm::vec3>() : glm::vec3(0)
-			);
-		}
-
-		void ParseOutput(const YAML::Node &image) {
-			ErrorCheck(m_file, "output");
-			ErrorCheck(image, "width");
-			ErrorCheck(image, "height");
-
-			m_renderImage = new Image(
-				image["width"].as<int>(),
-				image["height"].as<int>()
-			);
-			m_outputFileName = image["file name"].as<std::string>();
-		}
-
-		Hittable* ParseObject(const YAML::Node &object) {
-			Hittable *result;
+		void ParseObject(const YAML::Node &object, Scene &scene) {
 
 			const std::string type = object["type"].as<std::string>();
+
 			if (type == "sphere") {
 				ErrorCheck(object, "position");
 				ErrorCheck(object, "radius");
 				ErrorCheck(object, "material");
 
-				result = new Sphere(
+				scene.AddObject(std::make_unique<Sphere>(
 					object["position"].as<glm::vec3>(),
 					object["radius"].as<float>(),
-					ParseMaterial(object["material"].as<std::string>())
-				);
+					ParseMaterial(object["material"].as<std::string>(), scene)
+				));
 			} else if (type == "quad") {
 				ErrorCheck(object, "q");
 				ErrorCheck(object, "u");
 				ErrorCheck(object, "v");
 
-				result = new Quad(
+				scene.AddObject(std::make_unique<Quad>(
 					object["q"].as<glm::vec3>(),
 					object["u"].as<glm::vec3>(),
 					object["v"].as<glm::vec3>(),
-					ParseMaterial(object["material"].as<std::string>()),
+					ParseMaterial(object["material"].as<std::string>(), scene),
 					object["one side"] ? object["one side"].as<bool>() : false
-				);
+				));
 			} else {
 				std::cerr << "incorrect object type - " << object["type"].as<std::string>() << "\n";
 				exit(1);
 			}
-
-			return result;
 		}
 
-		Material* ParseMaterial(std::string materialName) {
-			Material *result;
+		Material* ParseMaterial(std::string materialName, Scene &scene) {
+			std::unique_ptr<Material> result;
 
-			// check if material with that name already in map
-			if (m_materials.find(materialName) != m_materials.end()) {
-				return m_materials[materialName];
-			}
+			// check if material with that name already in map !TO DO
 
+			ErrorCheck(m_file, "materials");
 			YAML::Node materials = m_file["materials"];
 			YAML::Node material = materials[materialName];
 
@@ -171,14 +136,14 @@ namespace art {
 				ErrorCheck(material, "albedo");
 
 				if (material["albedo"].IsSequence()) {
-					result = new Lambertian(
+					result = std::make_unique<Lambertian>(
 						material["albedo"].as<glm::vec3>(),
 						material["smoothness"] ? material["smoothness"].as<float>() : 0.0,
 						material["specular probability"] ? material["specular probability"].as<float>() : 0.0
 					);
 				} else {
-					result = new Lambertian(
-						ParseTexture(material["albedo"].as<std::string>()),
+					result = std::make_unique<Lambertian>(
+						ParseTexture(material["albedo"].as<std::string>(), scene),
 						material["smoothness"] ? material["smoothness"].as<float>() : 0.0,
 						material["specular probability"] ? material["specular probability"].as<float>() : 0.0
 					);
@@ -188,13 +153,13 @@ namespace art {
 				ErrorCheck(material, "smoothness");
 
 				if (material["albedo"].IsSequence()) {
-					result = new Metal(
+					result = std::make_unique<Metal>(
 						material["albedo"].as<glm::vec3>(),
 						material["smoothness"].as<float>()
 					);
 				} else {
-					result = new Metal(
-						ParseTexture(material["albedo"].as<std::string>()),
+					result = std::make_unique<Metal>(
+						ParseTexture(material["albedo"].as<std::string>(), scene),
 						material["smoothness"].as<float>()
 					);
 				}
@@ -203,7 +168,7 @@ namespace art {
 				ErrorCheck(material, "albedo");
 				ErrorCheck(material, "smoothness");
 
-				result = new Dielectric(
+				result = std::make_unique<Dielectric>(
 					material["refraction index"].as<float>(),
 					material["albedo"].as<glm::vec3>(),
 					material["smoothness"].as<float>()
@@ -212,12 +177,12 @@ namespace art {
 				ErrorCheck(material, "albedo");
 
 				if (material["albedo"].IsSequence()) {
-					result = new DiffuseLight(
+					result = std::make_unique<DiffuseLight>(
 						material["albedo"].as<glm::vec3>()
 					);
 				} else {
-					result = new DiffuseLight(
-						ParseTexture(material["albedo"].as<std::string>())
+					result = std::make_unique<DiffuseLight>(
+						ParseTexture(material["albedo"].as<std::string>(), scene)
 					);
 				}
 			} else {
@@ -225,23 +190,15 @@ namespace art {
 				exit(1);
 			}
 
-			m_materials[materialName] = result;
-			return result;
+			Material *ptr = result.get();
+			scene.AddMaterial(std::move(result));
+			return ptr;
 		}
 
-		Texture* ParseTexture(std::string textureName) {
-			Texture *result;
+		Texture* ParseTexture(std::string textureName, Scene &scene) {
+			std::unique_ptr<Texture> result;
 
-			// ckeck if there are any textures in file
-			if (!m_file["textures"]) {
-				return nullptr;
-			}
-
-			// check if material with that name already in map
-			if (m_textures.find(textureName) != m_textures.end()) {
-				return m_textures[textureName];
-			}
-
+			ErrorCheck(m_file, "textures");
 			YAML::Node textures = m_file["textures"];
 			YAML::Node texture = textures[textureName];
 
@@ -250,34 +207,35 @@ namespace art {
 			if (type == "albedo") {
 				ErrorCheck(texture, "albedo");
 
-				result = new SolidColorTexture(
+				result = std::make_unique<SolidColorTexture>(
 					texture["albedo"].as<glm::vec3>()
 				);
 			} else if (type == "image") {
 				ErrorCheck(texture, "file name");
 
-				result = new ImageTexture(
+				result = std::make_unique<ImageTexture>(
 					texture["file name"].as<std::string>()
 				);
 			} else if (type == "checker") {
 				ErrorCheck(texture, "texture 1");
 				ErrorCheck(texture, "texture 2");
 
-				result = new CheckerTexture(
+				result = std::make_unique<CheckerTexture>(
 					texture["scale"].as<float>(),
-					ParseTexture(texture["texture 1"].as<std::string>()),
-					ParseTexture(texture["texture 2"].as<std::string>())
+					ParseTexture(texture["texture 1"].as<std::string>(), scene),
+					ParseTexture(texture["texture 2"].as<std::string>(), scene)
 				);
 			} else {
 				std::cerr << "incorrect texture type - " << texture["type"].as<std::string>() << "\n";
 				exit(1);
 			}
 
-			m_textures[textureName] = result;
-			return result;
+			Texture *ptr = result.get();
+			scene.AddTexture(std::move(result));
+			return ptr;
 		}
 
-		void ErrorCheck(YAML::Node node, const std::string &value) {
+		void ErrorCheck(YAML::Node node, const std::string &value) const {
 			if (!node[value]) {
 				std::cerr << "parsing error!\n\n" << node << "\n\ndoes't contain: " << value << "\n";
 				exit(1);
@@ -285,15 +243,6 @@ namespace art {
 		}
 
 		YAML::Node m_file;
-
-		std::unordered_map<std::string, Texture*> m_textures;
-		std::unordered_map<std::string, Material*> m_materials;
-		std::vector<Hittable*> m_objects;
-
-		std::string m_outputFileName;
-		Image      *m_renderImage;
-		Camera      m_camera;
-		Scene       m_scene;
 	};
 
 }
