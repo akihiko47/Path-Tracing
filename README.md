@@ -7,6 +7,7 @@ This format is human-readable, which makes it easy to modify and create new scen
 ## Features
 - Multithreading
 - [YAML](https://yaml.org/) scenes description
+- Bilateral filtering
 - Cross platform
 - Lambertian diffuse
 - Reflections and refractions
