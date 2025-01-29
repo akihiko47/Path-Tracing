@@ -29,6 +29,7 @@ set (SOURCES
 	src/utils.hpp
 	src/texture.hpp
 	src/scene-parser.hpp
+	src/image-filters.hpp
 )
 
 

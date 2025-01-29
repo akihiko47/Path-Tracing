@@ -43,7 +43,7 @@ namespace art {
 
         glm::vec3 GetPixelColor(uint32_t px, uint32_t py) const {
             // cant sample out of bounds
-            if (!(0 <= px && px <= m_width) || !(0 <= px && px <= m_height)) {
+            if (!(0 <= px && px <= (m_width - 1)) || !(0 <= py && py <= (m_height - 1))) {
                 std::cerr << "cant get x = " << px << ", y = " << py << " from image with width = " << m_width << ", height = " << m_height << "\n";
                 return glm::vec3(1, 0, 1);
             }
@@ -57,8 +57,13 @@ namespace art {
             return res;
         }
 
-        void SetPixelColor(uint32_t px, uint32_t py, glm::vec3 color) {
-            color = LinearToGamma(color);
+        void SetPixelColor(uint32_t px, uint32_t py, glm::vec3 color, bool gammaCorrection = true) {
+            px = std::clamp(px, uint32_t(0), GetWidth());
+            py = std::clamp(py, uint32_t(0), GetHeight());
+
+            if (gammaCorrection) {
+                color = LinearToGamma(color);
+            }
 
             int ir = int(255.999 * std::clamp(color.r, 0.0f, 1.0f));
             int ig = int(255.999 * std::clamp(color.g, 0.0f, 1.0f));
@@ -88,26 +93,42 @@ namespace art {
         void LoadFromFile(const std::string &filename) {
             m_numChannels = 3;
 
-            std::string filePath = filename;
             std::filesystem::path namePath(filename);  // need this to check if path is relative
 
-            // if path is relative then seek inside textures folder (setup by cmake)
+            // if path is relative then seek inside textures and output folder (setup by cmake)
             // otherwise use absolute path specified by user
+            std::string finalFilePath;
             if (namePath.is_relative()) {
                 #ifdef TEXTURE_DIR
                     const char* textureDir = TEXTURE_DIR;
-                    filePath = std::string(textureDir) + "/" + filePath;
+                    finalFilePath = std::string(textureDir) + "/" + filename;
                 #endif
+
+                // if image is not in texture directory, look in output directory (for filtering)
+                if (!std::filesystem::exists(finalFilePath)) {
+                    #ifdef OUTPUT_DIR
+                        const char* outputDir = OUTPUT_DIR;
+                        finalFilePath = std::string(outputDir) + "/" + filename;
+                    #endif
+                }
+            } else {
+                finalFilePath = filename;
             }
 
-            std::cout << "loading image " << filePath << "\n";
+            if (!std::filesystem::exists(finalFilePath)) {
+                std::cerr << "error! no such image: " << finalFilePath;
+                exit(1);
+            }
+
+            std::cout << "loading image " << finalFilePath << "\n";
 
             int texWidth, texHeight, texChannels;
-            m_data = stbi_load(filePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
+            m_data = stbi_load(finalFilePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
             
             assert(m_data != NULL);
             if (m_data == NULL) {
-                std::cerr << "failed to load texture image!";
+                std::cerr << "failed to load image!";
+                exit(1);
             }
 
             m_width = texWidth;
