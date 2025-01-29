@@ -15,7 +15,7 @@ namespace art {
 	std::unique_ptr<Image> BilateralFilter(const Image &img, uint32_t msize, float sigma, float bsigma) {
 		// shadertoy.com/view/4dfGDH
 
-		//declare stuff
+		// declare stuff
 		const int kSize = (msize - 1) / 2;
 		std::vector<float> kernel;
 		kernel.resize(msize);
@@ -23,7 +23,7 @@ namespace art {
 		// create new image
 		std::unique_ptr<Image> newImg = std::make_unique<Image>(img.GetWidth(), img.GetHeight(), img.GetNumChannels());
 
-		//create the 1-D kernel
+		// create the 1-D kernel
 		for (int32_t j = 0; j <= kSize; ++j) {
 			kernel[kSize + j] = kernel[kSize - j] = Normpdf(float(j), sigma);
 		}
@@ -31,7 +31,7 @@ namespace art {
 		for (int32_t py = 0; py != img.GetHeight(); ++py) {
 			for (int32_t px = 0; px != img.GetWidth(); ++px) {
 
-				//declare stuff
+				// declare stuff
 				glm::vec3 final_colour = glm::vec3(0.0);
 				float Z = 0.0;
 
@@ -39,7 +39,7 @@ namespace art {
 				glm::vec3 cc;
 				float factor;
 				float bZ = 1.0 / Normpdf(0.0, bsigma);
-				//read out the texels
+				// read out the texels
 				for (int32_t i = -kSize; i <= kSize; ++i) {
 					for (int32_t j = -kSize; j <= kSize; ++j) {
 						cc = img.GetPixelColor(
