@@ -26,15 +26,16 @@ camera:
     bounces: 8
     position: [0, 1, 3.8]
     look at: [0, 1, 0]
-    fov: 40                # [optional] [default = 45]
-    defocus angle: 0       # [optional] [default = 0]
-    focus distance: 1      # [optional] [default = 1]
-    background: [0, 0, 0]  # [optional] [default = [0, 0, 0]]
+    fov: 40                  # [optional] [default = 45]
+    # defocus angle: 0       # [optional] [default = 0]
+    # focus distance: 1      # [optional] [default = 1]
+    # background: [0, 0, 0]  # [optional] [default = [0, 0, 0]]
 
 
 # all textures here
 # we need those for materials
 # note that we can use one texture for multiple materials
+# normal maps are image textures
 textures:
     white-tex:  # this is texture name, we will use it for material's texture parameter
         type: albedo
@@ -66,38 +67,50 @@ materials:
     white:                         # material name
         type: plastic
         albedo: white-tex          # it is texture name, can use albedo direcly [1.0, 1.0, 1.0]
-        smoothness: 0.0            # [optional] [default = 0]
-        specular probability: 0.0  # [optional] [default = 0]
+        # smoothness: 0.0            # [optional] [default = 0]
+        # specular probability: 0.0  # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     black:
         type: plastic
         albedo: black-tex          # albedo can be used here, example - [0.2, 0.2, 0.2]
-        smoothness: 0.0            # [optional] [default = 0]
-        specular probability: 0.0  # [optional] [default = 0]
+        # smoothness: 0.0            # [optional] [default = 0]
+        # specular probability: 0.0  # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     floor:
         type: plastic
-        albedo: checker            # can use checker texture as albedo
-        smoothness: 1.0            # [optional] [default = 0]
-        specular probability: 0.5  # [optional] [default = 0]
+        albedo: checker              # can use checker texture as albedo
+        smoothness: 1.0              # [optional] [default = 0]
+        specular probability: 0.5    # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     red:
         type: plastic
         albedo: [0.89, 0.26, 0.38]
-        smoothness: 0.0            # [optional] [default = 0]
-        specular probability: 0.0  # [optional] [default = 0]
+        # smoothness: 0.0            # [optional] [default = 0]
+        # specular probability: 0.0  # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
     
     green:
         type: plastic
         albedo: [0.62, 0.90, 0.30]
-        smoothness: 0.0            # [optional] [default = 0]
-        specular probability: 0.0  # [optional] [default = 0]
+        # smoothness: 0.0            # [optional] [default = 0]
+        # specular probability: 0.0  # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     blue:
         type: plastic
         albedo: [0.27, 0.49, 0.84]
-        smoothness: 0.0            # [optional] [default = 0]
-        specular probability: 0.0  # [optional] [default = 0]
+        # smoothness: 0.0            # [optional] [default = 0]
+        # specular probability: 0.0  # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     light:
         type: light
@@ -117,20 +130,26 @@ materials:
     plastic smooth:
         type: plastic
         albedo: [1.0, 0.0, 0.0]
-        smoothness: 1.0             # [optional] [default = 0]
-        specular probability: 0.2   # [optional] [default = 0]
+        smoothness: 1.0              # [optional] [default = 0]
+        specular probability: 0.2    # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     plastic matte:
         type: plastic
         albedo: [0.27, 0.49, 0.84]
-        smoothness: 0.3             # [optional] [default = 0]
-        specular probability: 0.5   # [optional] [default = 0]
+        smoothness: 0.3              # [optional] [default = 0]
+        specular probability: 0.5    # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
     wood:
         type: plastic
         albedo: image-tex   
-        smoothness: 0.7             # [optional] [default = 0]
-        specular probability: 0.02  # [optional] [default = 0]
+        smoothness: 0.7              # [optional] [default = 0]
+        specular probability: 0.02   # [optional] [default = 0]
+        # normal map: <texture-name> # [optional] [default = none]
+        # normal map strength: 1.0   # [optional] [default = 1]
 
 
 # all objects here (spheres and quads)
@@ -146,11 +165,11 @@ objects:
 
     back wall:
         type: quad
-        q: [-1,0,-1]     # one of corners
-        u: [2,0,0]       # vector of first edge  [from center]
-        v: [0,2,0]       # vector of second edge [from center]
-        material: white  # material name
-        one side: false  # [optional] [default = false]
+        q: [-1,0,-1]       # one of corners
+        u: [2,0,0]         # vector of first edge  [from center]
+        v: [0,2,0]         # vector of second edge [from center]
+        material: white    # material name
+        # one side: false  # [optional] [default = false]
 
     left wall:
         type: quad
@@ -158,7 +177,7 @@ objects:
         u: [0,0,2]
         v: [0,2,0]
         material: blue
-        one side: false  # [optional] [default = false]
+        # one side: false  # [optional] [default = false]
 
     right wall:
         type: quad
@@ -166,7 +185,7 @@ objects:
         u: [0,0,2]
         v: [0,2,0]
         material: red
-        one side: false  # [optional] [default = false]
+        # one side: false  # [optional] [default = false]
 
     front wall:
         type: quad
@@ -174,7 +193,7 @@ objects:
         u: [2,0,0]
         v: [0,2,0]
         material: white
-        one side: true   # [optional] [default = false]
+        one side: true     # [optional] [default = false]
 
     ceiling:
         type: quad
@@ -182,7 +201,7 @@ objects:
         u: [2,0,0]
         v: [0,0,2]
         material: white
-        one side: false  # [optional] [default = false]
+        # one side: false  # [optional] [default = false]
 
     floor:
         type: quad
@@ -190,7 +209,7 @@ objects:
         u: [2,0,0]
         v: [0,0,2]
         material: floor
-        one side: false  # [optional] [default = false]
+        # one side: false  # [optional] [default = false]
 
     light:
         type: quad
@@ -198,7 +217,7 @@ objects:
         u: [0.4,0,0]
         v: [0,0,0.4]
         material: light
-        one side: false  # [optional] [default = false]
+        # one side: false  # [optional] [default = false]
 
     # with spheres it should be intuitive
     sphere top left:
