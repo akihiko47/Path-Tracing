@@ -1,0 +1,79 @@
+---
+# =================================================
+#    Look at example.yaml scene for explanation
+# =================================================
+
+# parameters of output image
+# this image will be saved in 'output/' directory
+output:
+    width: 1920
+    height: 1080
+    file name: moon-scene
+
+
+# camera only needs first 4 parameters
+# others can be omitted
+camera:
+    samples: 100
+    bounces: 8
+    position: [0, 0, -5]
+    look at: [0.0, 0.0, 1.0]
+    fov: 15
+    background: [0.0, 0.0, 0.0]
+
+
+# all textures here
+# we need those for materials
+# note that we can use one texture for multiple materials
+textures:
+
+    # only png format is supported
+    # default search directory is 'textures/' folder
+    albedo-tex:
+        type: image
+        file name: moon-albedo-2k.png
+
+    # only png format is supported
+    # default search directory is 'textures/' folder
+    normal-tex:
+        type: image
+        file name: moon-normals-2k.png
+
+
+# all meterials here
+# we need materials to create objects
+# some materials require textures
+materials:
+    moon:
+        type: plastic
+        albedo: albedo-tex
+
+    light:
+        type: light
+        albedo: [1, 1, 1]
+
+
+# all objects here (spheres and quads)
+# objects requre materials names
+objects:
+
+    # quads are described like this:
+    # q -----> V
+    # |
+    # |        |   
+    # |         
+    # U    -   +
+
+    moon:
+        type: sphere
+        position: [0.0, 0.0, 0.0]
+        radius: 0.3
+        material: moon
+
+    light:
+        type: quad
+        q: [3,-3,-3]
+        u: [0,0,6]
+        v: [0,6,0]
+        material: light
+...

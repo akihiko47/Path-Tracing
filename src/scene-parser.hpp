@@ -147,13 +147,15 @@ namespace art {
 					result = std::make_unique<Lambertian>(
 						material["albedo"].as<glm::vec3>(),
 						material["smoothness"] ? material["smoothness"].as<float>() : 0.0,
-						material["specular probability"] ? material["specular probability"].as<float>() : 0.0
+						material["specular probability"] ? material["specular probability"].as<float>() : 0.0,
+						material["normal map"] ? ParseTexture(material["normal map"].as<std::string>(), scene) : nullptr
 					);
 				} else {
 					result = std::make_unique<Lambertian>(
 						ParseTexture(material["albedo"].as<std::string>(), scene),
 						material["smoothness"] ? material["smoothness"].as<float>() : 0.0,
-						material["specular probability"] ? material["specular probability"].as<float>() : 0.0
+						material["specular probability"] ? material["specular probability"].as<float>() : 0.0,
+						material["normal map"] ? ParseTexture(material["normal map"].as<std::string>(), scene) : nullptr
 					);
 				}
 			} else if (type == "metal") {

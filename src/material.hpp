@@ -23,15 +23,17 @@ namespace art {
 
 	class Lambertian : public Material {
 	public:
-		Lambertian(const glm::vec3 &albedo, float smoothness, float specularProbability) : 
+		Lambertian(const glm::vec3 &albedo, float smoothness, float specularProbability, const Texture *normals = nullptr) :
 			m_albedo(albedo),
 			m_textureAlbedo(nullptr),
+			m_textureNormals(normals),
 			m_smoothness(smoothness),
 			m_specularProbability(specularProbability) {}
 
-		Lambertian(const Texture *albedo, float smoothness, float specularProbability) :
+		Lambertian(const Texture *albedo, float smoothness, float specularProbability, const Texture *normals = nullptr) :
 			m_albedo(glm::vec3(1)),
 			m_textureAlbedo(albedo),
+			m_textureNormals(normals),
 			m_smoothness(smoothness),
 			m_specularProbability(specularProbability) {}
 
@@ -62,6 +64,7 @@ namespace art {
 	private:
 		glm::vec3      m_albedo;
 		const Texture *m_textureAlbedo;
+		const Texture *m_textureNormals;
 		float          m_smoothness;
 		float          m_specularProbability;
 	};
