@@ -23,27 +23,42 @@ namespace art {
 
 	class Lambertian : public Material {
 	public:
-		Lambertian(const glm::vec3 &albedo, float smoothness, float specularProbability, const Texture *normals = nullptr) :
+		Lambertian(const glm::vec3 &albedo, float smoothness, float specularProbability, const Texture *normals, float normalsStrength) :
 			m_albedo(albedo),
 			m_textureAlbedo(nullptr),
 			m_textureNormals(normals),
+			m_normalsStrength(normalsStrength),
 			m_smoothness(smoothness),
 			m_specularProbability(specularProbability) {}
 
-		Lambertian(const Texture *albedo, float smoothness, float specularProbability, const Texture *normals = nullptr) :
+		Lambertian(const Texture *albedo, float smoothness, float specularProbability, const Texture *normals, float normalsStrength) :
 			m_albedo(glm::vec3(1)),
 			m_textureAlbedo(albedo),
 			m_textureNormals(normals),
+			m_normalsStrength(normalsStrength),
 			m_smoothness(smoothness),
 			m_specularProbability(specularProbability) {}
 
 		bool Scatter(const Ray &rayIn, const HitInfo &hitInfo, glm::vec3 &attenuation, Ray &rayOut) const override {
 
-			glm::vec3 diffuseDir = hitInfo.N + RandomVec();
-			glm::vec3 reflectDir = glm::reflect(rayIn.GetDirection(), hitInfo.N);
+			glm::vec3 N;
+			if (m_textureNormals) {
+				glm::vec3 tangentSpaceNormal = m_textureNormals->Sample(hitInfo.u, hitInfo.v, hitInfo.p) * 2.0f - 1.0f;
+				tangentSpaceNormal.x *= m_normalsStrength;
+				tangentSpaceNormal.y *= m_normalsStrength;
+				tangentSpaceNormal = glm::normalize(tangentSpaceNormal);
+
+				glm::mat3 TBN = glm::mat3(hitInfo.T, hitInfo.BT, hitInfo.N);
+				N = glm::normalize(TBN * tangentSpaceNormal);
+			} else {
+				N = hitInfo.N;
+			}
+			 
+			glm::vec3 diffuseDir = N + RandomVec();
+			glm::vec3 reflectDir = glm::reflect(rayIn.GetDirection(), N);
 
 			if (VecNearZero(diffuseDir)) {
-				diffuseDir = hitInfo.N;
+				diffuseDir = N;
 			}
 
 			bool isSpecularBounce = m_specularProbability >= Random();
@@ -65,6 +80,7 @@ namespace art {
 		glm::vec3      m_albedo;
 		const Texture *m_textureAlbedo;
 		const Texture *m_textureNormals;
+		float          m_normalsStrength;
 		float          m_smoothness;
 		float          m_specularProbability;
 	};

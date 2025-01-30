@@ -14,6 +14,8 @@ namespace art {
 	struct HitInfo {
 		glm::vec3 p;
 		glm::vec3 N;
+		glm::vec3 T;
+		glm::vec3 BT;
 		Material *mat;
 		float t;
 		float u;
@@ -89,6 +91,11 @@ namespace art {
 			hitInfo.SetFaceNormal(r, outN);
 			GetSphereUV(outN, hitInfo.u, hitInfo.v);
 			hitInfo.mat = m_mat;
+
+			// calculate tangent space for normal maps
+			float phi = std::atan2(-hitInfo.p.z, hitInfo.p.x) + pi;
+			hitInfo.T = -glm::vec3(-sin(phi), 0, cos(phi));
+			hitInfo.BT = glm::cross(hitInfo.N, hitInfo.T);
 
 			return true;
 		}

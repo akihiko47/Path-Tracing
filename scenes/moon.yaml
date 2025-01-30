@@ -14,11 +14,11 @@ output:
 # camera only needs first 4 parameters
 # others can be omitted
 camera:
-    samples: 100
+    samples: 200
     bounces: 8
-    position: [0, 0, -5]
-    look at: [0.0, 0.0, 1.0]
-    fov: 15
+    position: [0.0, 0, -1]
+    look at: [0.0, 0.0, 0.0]
+    fov: 40
     background: [0.0, 0.0, 0.0]
 
 
@@ -47,6 +47,10 @@ materials:
     moon:
         type: plastic
         albedo: albedo-tex
+        normal map: normal-tex
+        normal map strength: 2.0
+        smoothness: 0.0            # [optional] [default = 0]
+        specular probability: 0.0  # [optional] [default = 0]
 
     light:
         type: light
@@ -72,8 +76,8 @@ objects:
 
     light:
         type: quad
-        q: [3,-3,-3]
-        u: [0,0,6]
-        v: [0,6,0]
+        q: [3,-2,-2]
+        u: [0,0,4]
+        v: [0,4,0]
         material: light
 ...
