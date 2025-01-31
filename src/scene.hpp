@@ -30,8 +30,8 @@ namespace art {
 			m_skyboxColor = color;
 		}
 
-		glm::vec3 SampleSkybox(glm::vec3 dir) const {
-			return (m_skyboxTextureIndex != -1) ? m_textures[m_skyboxTextureIndex]->Sample(0, 0, glm::vec3(0)) : m_skyboxColor;
+		glm::vec3 SampleSkybox(const glm::vec3 &dir) const {
+			return (m_skyboxTextureIndex != -1) ? m_textures[m_skyboxTextureIndex]->Sample(0, 0, glm::vec3(0), dir) : m_skyboxColor;
 		}
 
 		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {

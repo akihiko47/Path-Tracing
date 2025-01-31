@@ -254,12 +254,12 @@ namespace art {
 
 				result = std::make_unique<CubemapTexture>(
 					std::vector<std::string> {
-						texture["top"].as<std::string>(),
-						texture["left"].as<std::string>(),
-						texture["front"].as<std::string>(),
 						texture["right"].as<std::string>(),
-						texture["back"].as<std::string>(),
+						texture["left"].as<std::string>(),
+						texture["top"].as<std::string>(),
 						texture["bottom"].as<std::string>(),
+						texture["front"].as<std::string>(),
+						texture["back"].as<std::string>(),
 					}
 				);
 			} else {

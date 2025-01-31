@@ -43,7 +43,7 @@ namespace art {
 
 			glm::vec3 N;
 			if (m_textureNormals) {
-				glm::vec3 tangentSpaceNormal = m_textureNormals->Sample(hitInfo.u, hitInfo.v, hitInfo.p) * 2.0f - 1.0f;
+				glm::vec3 tangentSpaceNormal = m_textureNormals->Sample(hitInfo.u, hitInfo.v, hitInfo.p, glm::vec3(0)) * 2.0f - 1.0f;
 				tangentSpaceNormal.x *= m_normalsStrength;
 				tangentSpaceNormal.y *= m_normalsStrength;
 				tangentSpaceNormal = glm::normalize(tangentSpaceNormal);
@@ -66,7 +66,7 @@ namespace art {
 			glm::vec3 dir = glm::mix(diffuseDir, reflectDir, m_smoothness * isSpecularBounce);
 
 			attenuation = glm::mix(
-				m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p) : m_albedo,
+				m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p, glm::vec3(0)) : m_albedo,
 				glm::vec3(1),
 				isSpecularBounce
 			);
@@ -104,7 +104,7 @@ namespace art {
 			reflectDir = glm::normalize(glm::normalize(reflectDir) + ((1 - m_smoothness) * RandomVec()));
 			rayOut = Ray(hitInfo.p, reflectDir);
 
-			attenuation = m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p) : m_albedo;
+			attenuation = m_textureAlbedo ? m_textureAlbedo->Sample(hitInfo.u, hitInfo.v, hitInfo.p, glm::vec3(0)) : m_albedo;
 
 			return (glm::dot(rayOut.GetDirection(), hitInfo.N) > 0);  // check if we are not reflecting inside object
 		}
@@ -167,7 +167,7 @@ namespace art {
 		}
 
 		glm::vec3 Emission(float u, float v, const glm::vec3 &p) const override {
-			return m_textureAlbedo ? m_textureAlbedo->Sample(u, v, p) : m_albedo;
+			return m_textureAlbedo ? m_textureAlbedo->Sample(u, v, p, glm::vec3(0)) : m_albedo;
 		}
 
 	private:

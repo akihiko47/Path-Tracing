@@ -128,6 +128,7 @@ namespace art {
 			// return background (skybox) if no hit
 			art::HitInfo info;
 			if (!scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
+				currDepth = 0;
 				return scene.SampleSkybox(r.GetDirection());
 			}
 

@@ -11,13 +11,14 @@ output:
 
 camera:
     samples: 200
-    bounces: 4
-    position: [0.0, 0, -1]
+    bounces: 6
+    position: [2, 1, 0.5]
     look at: [0.0, 0.0, 0.0]
-    fov: 40
+    fov: 35
 
 
-skybox: skybox-tex
+# skybox can be specified using skybox texture name
+skybox: skybox-tex  # texture name
 
 
 textures:
@@ -29,7 +30,8 @@ textures:
         type: image
         file name: moon-normals-2k.png
 
-    skybox-tex:
+    # order of faces doesn't matter
+    skybox-tex:  # texture name
         type:   cubemap
         top:    skybox/top.jpg
         left:   skybox/left.jpg
