@@ -21,6 +21,8 @@ namespace art {
 
 		void PopulateScene(Scene &scene) {
 
+			ParseSkybox(scene);
+
 			// allocate objects and transfer ownership to scene
 			ErrorCheck(m_file, "objects");
 			YAML::Node objects = m_file["objects"];
@@ -38,7 +40,6 @@ namespace art {
 			ErrorCheck(camera, "bounces");
 			ErrorCheck(camera, "position");
 			ErrorCheck(camera, "look at");
-			ErrorCheck(camera, "background");
 
 			return Camera(
 				camera["samples"].as<int>(),
@@ -47,9 +48,7 @@ namespace art {
 				camera["look at"].as<glm::vec3>(),
 				camera["fov"] ? camera["fov"].as<float>() : 45,
 				camera["defocus angle"] ? camera["defocus angle"].as<float>() : 0,
-				camera["focus distance"] ? camera["focus distance"].as<float>() : 1,
-				camera["background"].IsSequence() ? camera["background"].as<glm::vec3>() : glm::vec3(0),
-				camera["background"].IsSequence() ? nullptr : static_cast<CubemapTexture*>(ParseTexture(camera["background"].as<std::string>(), scene))
+				camera["focus distance"] ? camera["focus distance"].as<float>() : 1
 			);
 		}
 
@@ -210,7 +209,7 @@ namespace art {
 			return ptr;
 		}
 
-		Texture* ParseTexture(std::string textureName, Scene &scene) {
+		Texture* ParseTexture(std::string textureName, Scene &scene, bool forSkybox = false) {
 			std::unique_ptr<Texture> result;
 
 			// check if texture with that name already created
@@ -270,8 +269,25 @@ namespace art {
 
 			Texture *ptr = result.get();
 			m_parsedTextures[textureName] = ptr;
-			scene.AddTexture(std::move(result));
+			if (!forSkybox) {
+				scene.AddTexture(std::move(result));
+			} else {
+				scene.AddSkybox(std::move(result));
+			}
+
 			return ptr;
+		}
+
+		void ParseSkybox(Scene &scene) {
+			if (m_file["skybox"]) {
+				YAML::Node skybox = m_file["skybox"];
+
+				if (skybox.IsSequence()) {
+					scene.AddSkybox(skybox.as<glm::vec3>());
+				} else {
+					ParseTexture(skybox.as<std::string>(), scene, true);
+				}
+			}
 		}
 
 		void ErrorCheck(YAML::Node node, const std::string &value) const {

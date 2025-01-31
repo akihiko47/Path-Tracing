@@ -19,8 +19,6 @@ camera:
     position: [0, 1, 2]
     look at: [0, 1, 0]
     fov: 35
-    background: [0.0, 0.0, 0.0]
-
 
 # all textures here
 # we need those for materials

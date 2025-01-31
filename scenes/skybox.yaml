@@ -19,8 +19,10 @@ camera:
     position: [0.0, 0, -1]
     look at: [0.0, 0.0, 0.0]
     fov: 40
-    background: skybox-tex
 
+# skybox can be cubemap texture or solid color
+# note that skybox is optional, default is [0, 0, 0]
+skybox: skybox-tex
 
 # all textures here
 # we need those for materials
@@ -40,7 +42,7 @@ textures:
         file name: moon-normals-2k.png
 
     skybox-tex:
-        type: cubemap
+        type:   cubemap
         top:    skybox/top.jpg
         left:   skybox/left.jpg
         front:  skybox/front.jpg

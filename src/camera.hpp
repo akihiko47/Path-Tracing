@@ -23,19 +23,16 @@ namespace art {
 			m_lookAt(glm::vec3(0, 0, -1)),
 			m_fov(45),
 			m_defocusAngle(0),
-			m_focusDist(1),
-			m_background(glm::vec3(1)) {}
+			m_focusDist(1) {}
 
-		Camera(uint32_t nSamples, uint32_t maxDepth, glm::vec3 Pos, glm::vec3 lookAt, float fov, float defocusAngle, float focusDist, glm::vec3 background, CubemapTexture *backgroundCubemap) :
+		Camera(uint32_t nSamples, uint32_t maxDepth, glm::vec3 Pos, glm::vec3 lookAt, float fov, float defocusAngle, float focusDist) :
 			m_nSamples(nSamples), 
 			m_maxDepth(maxDepth), 
 			m_pos(Pos),
 			m_lookAt(lookAt),
 			m_fov(fov),
 			m_defocusAngle(defocusAngle),
-			m_focusDist(focusDist),
-			m_background(background),
-			m_backgroundCubemap(backgroundCubemap){}
+			m_focusDist(focusDist) {}
 
 		void Render(Image &image, Scene &scene) const {
 			// camera
@@ -123,7 +120,7 @@ namespace art {
 		}
 
 	private:
-		glm::vec3 RayColor(const art::Ray &r, int currDepth, const art::Hittable &scene) const {
+		glm::vec3 RayColor(const art::Ray &r, int currDepth, const art::Scene &scene) const {
 			if (currDepth <= 0) {  // reached bounce limit
 				return glm::vec3(0.0);
 			}
@@ -131,10 +128,7 @@ namespace art {
 			// return background (skybox) if no hit
 			art::HitInfo info;
 			if (!scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
-				if (m_backgroundCubemap == nullptr) {
-					return m_background;
-				}
-				return m_backgroundCubemap->Sample(0, 0, glm::vec3(0));
+				return scene.SampleSkybox(r.GetDirection());
 			}
 
 			Ray rayOut;
@@ -176,9 +170,6 @@ namespace art {
 		float     m_fov;
 		float     m_defocusAngle;
 		float     m_focusDist;
-
-		glm::vec3       m_background;
-		const CubemapTexture *m_backgroundCubemap;
 		
 		// these fields can be changed in Render() method 
 		// (semantic constancy)
