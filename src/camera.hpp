@@ -131,7 +131,10 @@ namespace art {
 			// return background (skybox) if no hit
 			art::HitInfo info;
 			if (!scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
-				return m_background;
+				if (m_backgroundCubemap == nullptr) {
+					return m_background;
+				}
+				return m_backgroundCubemap->Sample(0, 0, glm::vec3(0));
 			}
 
 			Ray rayOut;
@@ -175,7 +178,7 @@ namespace art {
 		float     m_focusDist;
 
 		glm::vec3       m_background;
-		CubemapTexture *m_backgroundCubemap;
+		const CubemapTexture *m_backgroundCubemap;
 		
 		// these fields can be changed in Render() method 
 		// (semantic constancy)
