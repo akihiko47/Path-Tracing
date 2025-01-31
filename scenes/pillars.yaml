@@ -1,18 +1,14 @@
 ---
 # =================================================
-#    Look at example.yaml scene for explanation
+#    see 'example.yaml' scene for explanation
 # =================================================
 
-# parameters of output image
-# this image will be saved in 'output/' directory
 output:
     width: 1000
     height: 300
     file name: pillars-scene
 
 
-# camera only needs first 4 parameters
-# others can be omitted
 camera:
     samples: 300
     bounces: 10
@@ -20,9 +16,7 @@ camera:
     look at: [0, 1, 0]
     fov: 35
 
-# all textures here
-# we need those for materials
-# note that we can use one texture for multiple materials
+
 textures:
     odd:
         type: albedo
@@ -32,24 +26,17 @@ textures:
         type: albedo
         albedo: [0.23, 0.23, 0.23]
 
-    # checker board pattern texture
-    # scale is responsible for size of squares
     checker:
         type: checker
         scale: 4.0
         texture 1: odd
         texture 2: even
 
-    # only png format is supported
-    # default search directory is 'textures/' folder
     image-tex:
         type: image
         file name: wood.png
 
 
-# all meterials here
-# we need materials to create objects
-# some materials require textures
 materials:
     ground:
         type: plastic
@@ -77,17 +64,7 @@ materials:
         albedo: [6, 5, 4]
 
 
-# all objects here (spheres and quads)
-# objects requre materials names
 objects:
-
-    # quads are described like this:
-    # q -----> V
-    # |
-    # |        |   
-    # |         
-    # U    -   +
-
     left wall:
         type: quad
         q: [0,-2,-3]

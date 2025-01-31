@@ -1,18 +1,14 @@
 ---
 # =================================================
-#    Look at example.yaml scene for explanation
+#     see 'example.yaml' scene for explanation
 # =================================================
 
-# parameters of output image
-# this image will be saved in 'output/' directory
 output:
     width: 640
     height: 360
     file name: skybox-scene.png
 
 
-# camera only needs first 4 parameters
-# others can be omitted
 camera:
     samples: 200
     bounces: 4
@@ -20,23 +16,15 @@ camera:
     look at: [0.0, 0.0, 0.0]
     fov: 40
 
-# skybox can be cubemap texture or solid color
-# note that skybox is optional, default is [0, 0, 0]
+
 skybox: skybox-tex
 
-# all textures here
-# we need those for materials
-# note that we can use one texture for multiple materials
-textures:
 
-    # only png format is supported
-    # default search directory is 'textures/' folder
+textures:
     albedo-tex:
         type: image
         file name: moon-albedo-2k.png
 
-    # only png format is supported
-    # default search directory is 'textures/' folder
     normal-tex:
         type: image
         file name: moon-normals-2k.png
@@ -51,9 +39,6 @@ textures:
         bottom: skybox/bottom.jpg
 
 
-# all meterials here
-# we need materials to create objects
-# some materials require textures
 materials:
     moon:
         type: plastic
@@ -64,17 +49,7 @@ materials:
         # specular probability: 0.0  # [optional] [default = 0]
 
 
-# all objects here (spheres and quads)
-# objects requre materials names
 objects:
-
-    # quads are described like this:
-    # q -----> V
-    # |
-    # |        |   
-    # |         
-    # U    -   +
-
     moon:
         type: sphere
         position: [0.0, 0.0, 0.0]

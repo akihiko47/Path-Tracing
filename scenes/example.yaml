@@ -1,7 +1,7 @@
 ---
 # =================================================
 # This file contains all parameters for all objects
-#    Note that optional parameters can be omitted
+#         optional parameters are commented
 #      They are here for demonstration purposes
 #           [Use this scene as an example]
 #
@@ -16,14 +16,16 @@
 
 # parameters of output image
 # this image will be saved in 'output/' directory
+# width and height are in pixels
 output:
     width: 400
     height: 400
     file name: example-scene.png  # can omit extension, always will be png
 
 
-# camera only needs first 4 parameters
-# others can be omitted
+# parameters of main camera
+# use last 2 parameters for defocus blur
+# more samples -> better image -> slower rendering
 camera:
     samples: 100
     bounces: 8
@@ -31,7 +33,12 @@ camera:
     look at: [0, 1, 0]
     fov: 40                  # [optional] [default = 45]
     # defocus angle: 0       # [optional] [default = 0]
-    # focus distance: 1      # [optional] [default = 1]                     
+    # focus distance: 1      # [optional] [default = 1]          
+
+
+# skybox can be cubemap texture or solid color
+# note that skybox is optional, default is [0, 0, 0]
+# skybox: skybox-tex
 
 
 # all textures here
@@ -52,7 +59,7 @@ textures:
     checker:
         type: checker
         scale: 4.0
-        texture 1: white-tex
+        texture 1: white-tex  # texture name
         texture 2: black-tex
 
     # can use .png as well as .jpg
@@ -68,7 +75,7 @@ textures:
 materials:
     white:                         # material name
         type: plastic
-        albedo: white-tex          # it is texture name, can use albedo direcly [1.0, 1.0, 1.0]
+        albedo: white-tex            # it is texture name, can use albedo direcly [1.0, 1.0, 1.0]
         # smoothness: 0.0            # [optional] [default = 0]
         # specular probability: 0.0  # [optional] [default = 0]
         # normal map: <texture-name> # [optional] [default = none]
@@ -76,7 +83,7 @@ materials:
 
     black:
         type: plastic
-        albedo: black-tex          # albedo can be used here, example - [0.2, 0.2, 0.2]
+        albedo: black-tex            # albedo can be used here, example - [0.2, 0.2, 0.2]
         # smoothness: 0.0            # [optional] [default = 0]
         # specular probability: 0.0  # [optional] [default = 0]
         # normal map: <texture-name> # [optional] [default = none]
