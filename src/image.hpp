@@ -83,16 +83,14 @@ namespace art {
             #endif
 
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
-            assert(res != 0);
 
 #ifdef _WIN32
+            // show image in viewer
             ShellExecute(NULL, "open", filePath.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 #endif
         }
 
         void LoadFromFile(const std::string &filename) {
-            m_numChannels = 3;
-
             std::filesystem::path namePath(filename);  // need this to check if path is relative
 
             // if path is relative then seek inside textures and output folder (setup by cmake)
@@ -122,10 +120,10 @@ namespace art {
 
             std::cout << "loading image " << finalFilePath << "\n";
 
+            m_numChannels = 3;
             int texWidth, texHeight, texChannels;
             m_data = stbi_load(finalFilePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
             
-            assert(m_data != NULL);
             if (m_data == NULL) {
                 std::cerr << "failed to load image!";
                 exit(1);

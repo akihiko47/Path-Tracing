@@ -15,7 +15,7 @@ output:
 # others can be omitted
 camera:
     samples: 200
-    bounces: 8
+    bounces: 4
     position: [0.0, 0, -1]
     look at: [0.0, 0.0, 0.0]
     fov: 40

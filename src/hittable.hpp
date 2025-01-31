@@ -163,6 +163,10 @@ namespace art {
 			hitInfo.mat = m_mat;
 			hitInfo.SetFaceNormal(r, m_N);
 
+			// calculate tangent space for normal maps
+			hitInfo.T = glm::normalize(m_u);
+			hitInfo.BT = glm::cross(hitInfo.N, hitInfo.T);
+
 			return true;
 		}
 
