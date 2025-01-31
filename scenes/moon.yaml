@@ -47,14 +47,14 @@ materials:
     moon:
         type: plastic
         albedo: albedo-tex
-        normal map: normal-tex
-        normal map strength: 2.0
-        smoothness: 0.0            # [optional] [default = 0]
-        specular probability: 0.0  # [optional] [default = 0]
+        normal map: normal-tex       # [optional] [default = none]
+        normal map strength: 1.5     # [optional] [default = 1]
+        # smoothness: 0.0            # [optional] [default = 0]
+        # specular probability: 0.0  # [optional] [default = 0]
 
     light:
         type: light
-        albedo: [1, 1, 1]
+        albedo: [2, 2, 2]
 
 
 # all objects here (spheres and quads)
