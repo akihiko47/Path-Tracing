@@ -16,7 +16,7 @@
 output:
     width: 400
     height: 400
-    file name: example-scene
+    file name: example-scene.png  # can omit extension, always will be png
 
 
 # camera only needs first 4 parameters
@@ -53,7 +53,7 @@ textures:
         texture 1: white-tex
         texture 2: black-tex
 
-    # only png format is supported
+    # can use .png as well as .jpg
     # default search directory is 'textures/' folder
     image-tex:
         type: image

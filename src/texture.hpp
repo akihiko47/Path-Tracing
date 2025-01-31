@@ -71,5 +71,27 @@ namespace art {
 	private:
 		const Image m_image;
 	};
+
+	class CubemapTexture : public Texture {
+	public:
+		CubemapTexture(const std::string &filename) :
+			m_image(filename) {
+		}
+
+		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const {
+			float ip;  // dummy parameter for integer part
+
+			// getting fractional part of uv (for repeating)
+			u = std::modf(u, &ip);
+			v = 1.0 - std::modf(v, &ip);  // reversing y
+
+			uint32_t px = u * (m_image.GetWidth() - 1);
+			uint32_t py = v * (m_image.GetHeight() - 1);
+			return m_image.GetPixelColor(px, py);
+		}
+
+	private:
+		const Image m_image;
+	};
 }
 

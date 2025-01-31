@@ -76,11 +76,14 @@ namespace art {
 
         void SaveAsPng(const std::string &name) const {
             // saving to output directory specified by cmake
-            std::string filePath = name + ".png";
+            std::string filePath = name;
             #ifdef OUTPUT_DIR
                 const char* outputDir = OUTPUT_DIR;
-                filePath = std::string(outputDir) + "/" + name + ".png";
+                filePath = std::string(outputDir) + "/" + name;
             #endif
+            filePath = std::filesystem::path(filePath).replace_extension("png").string();
+
+            std::cout << "saving image: " << filePath << "\n";
 
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
 
