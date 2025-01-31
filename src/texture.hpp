@@ -74,24 +74,19 @@ namespace art {
 
 	class CubemapTexture : public Texture {
 	public:
-		CubemapTexture(const std::string &filename) :
-			m_image(filename) {
+		CubemapTexture(std::vector<std::string> faces) {
+			std::cout << "loading cubemap with images:\n";
+			for (uint32_t i = 0; i != faces.size(); ++i) {
+				std::cout << "\t" << faces[i] << "\n";
+			}
 		}
 
 		glm::vec3 Sample(float u, float v, const glm::vec3 &p) const {
-			float ip;  // dummy parameter for integer part
-
-			// getting fractional part of uv (for repeating)
-			u = std::modf(u, &ip);
-			v = 1.0 - std::modf(v, &ip);  // reversing y
-
-			uint32_t px = u * (m_image.GetWidth() - 1);
-			uint32_t py = v * (m_image.GetHeight() - 1);
-			return m_image.GetPixelColor(px, py);
+			return glm::vec3(0.5, 0.0, 0.0);
 		}
 
 	private:
-		const Image m_image;
+		std::vector<std::unique_ptr<Image>> m_images;
 	};
 }
 

@@ -14,7 +14,7 @@ output:
 # camera only needs first 4 parameters
 # others can be omitted
 camera:
-    samples: 4800
+    samples: 300
     bounces: 10
     position: [0, 1, 2]
     look at: [0, 1, 0]

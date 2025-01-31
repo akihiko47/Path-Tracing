@@ -30,7 +30,7 @@ namespace art {
 			}
 		}
 
-		Camera GetCamera() const { 
+		Camera GetCamera(Scene &scene) { 
 			ErrorCheck(m_file, "camera");
 
 			YAML::Node camera = m_file["camera"];
@@ -38,6 +38,7 @@ namespace art {
 			ErrorCheck(camera, "bounces");
 			ErrorCheck(camera, "position");
 			ErrorCheck(camera, "look at");
+			ErrorCheck(camera, "background");
 
 			return Camera(
 				camera["samples"].as<int>(),
@@ -47,7 +48,8 @@ namespace art {
 				camera["fov"] ? camera["fov"].as<float>() : 45,
 				camera["defocus angle"] ? camera["defocus angle"].as<float>() : 0,
 				camera["focus distance"] ? camera["focus distance"].as<float>() : 1,
-				camera["background"] ? camera["background"].as<glm::vec3>() : glm::vec3(0)
+				camera["background"].IsSequence() ? camera["background"].as<glm::vec3>() : glm::vec3(0),
+				camera["background"].IsSequence() ? nullptr : static_cast<CubemapTexture*>(ParseTexture(camera["background"].as<std::string>(), scene))
 			);
 		}
 
@@ -242,6 +244,24 @@ namespace art {
 					texture["scale"].as<float>(),
 					ParseTexture(texture["texture 1"].as<std::string>(), scene),
 					ParseTexture(texture["texture 2"].as<std::string>(), scene)
+				);
+			} else if (type == "cubemap") {
+				ErrorCheck(texture, "top");
+				ErrorCheck(texture, "left");
+				ErrorCheck(texture, "front");
+				ErrorCheck(texture, "right");
+				ErrorCheck(texture, "back");
+				ErrorCheck(texture, "bottom");
+
+				result = std::make_unique<CubemapTexture>(
+					std::vector<std::string> {
+						texture["top"].as<std::string>(),
+						texture["left"].as<std::string>(),
+						texture["front"].as<std::string>(),
+						texture["right"].as<std::string>(),
+						texture["back"].as<std::string>(),
+						texture["bottom"].as<std::string>(),
+					}
 				);
 			} else {
 				std::cerr << "incorrect texture type - " << texture["type"].as<std::string>() << "\n";

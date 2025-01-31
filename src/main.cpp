@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     art::SceneParser parser{std::string(argv[1])};
 
     art::Scene                  scene;
-    art::Camera                 camera      = parser.GetCamera();
+    art::Camera                 camera      = parser.GetCamera(scene);  // we pass scene to add cubemap texture if needed
     std::unique_ptr<art::Image> renderImage = parser.GetImage();
     std::string                 outputName  = parser.GetOutputFileName();
 

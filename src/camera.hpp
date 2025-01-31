@@ -26,7 +26,7 @@ namespace art {
 			m_focusDist(1),
 			m_background(glm::vec3(1)) {}
 
-		Camera(uint32_t nSamples, uint32_t maxDepth, glm::vec3 Pos, glm::vec3 lookAt, float fov, float defocusAngle, float focusDist, glm::vec3 background) :
+		Camera(uint32_t nSamples, uint32_t maxDepth, glm::vec3 Pos, glm::vec3 lookAt, float fov, float defocusAngle, float focusDist, glm::vec3 background, CubemapTexture *backgroundCubemap) :
 			m_nSamples(nSamples), 
 			m_maxDepth(maxDepth), 
 			m_pos(Pos),
@@ -34,7 +34,8 @@ namespace art {
 			m_fov(fov),
 			m_defocusAngle(defocusAngle),
 			m_focusDist(focusDist),
-			m_background(background) {}
+			m_background(background),
+			m_backgroundCubemap(backgroundCubemap){}
 
 		void Render(Image &image, Scene &scene) const {
 			// camera
@@ -172,7 +173,9 @@ namespace art {
 		float     m_fov;
 		float     m_defocusAngle;
 		float     m_focusDist;
-		glm::vec3 m_background;
+
+		glm::vec3       m_background;
+		CubemapTexture *m_backgroundCubemap;
 		
 		// these fields can be changed in Render() method 
 		// (semantic constancy)
