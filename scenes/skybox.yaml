@@ -4,13 +4,13 @@
 # =================================================
 
 output:
-    width: 640
-    height: 360
+    width: 1920
+    height: 1080
     file name: skybox-scene.png
 
 
 camera:
-    samples: 500
+    samples: 2500
     bounces: 8
     position: [-6, 5, 9]
     look at: [0.0, 1.0, 0.0]
