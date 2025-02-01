@@ -53,19 +53,30 @@ namespace art {
 
 	class ImageTexture : public Texture {
 	public:
-		ImageTexture(const std::string &filename) :
-			m_image(filename) {}
+		ImageTexture(const std::string &filename, bool isHDR) : m_image(filename, isHDR) {}
 
 		glm::vec3 Sample(float u, float v, const glm::vec3 &p, const glm::vec3 &dir) const {
-			float ip;  // dummy parameter for integer part
+			if (dir == glm::vec3(0)) {
+				// sample with UV (for textures)
 
-			// getting fractional part of uv (for repeating)
-			u = std::modf(u, &ip);
-			v = 1.0 - std::modf(v, &ip);  // reversing y
+				float ip;  // dummy parameter for integer part
+
+				// getting fractional part of uv (for repeating)
+				u = std::modf(u, &ip);
+				v = 1.0 - std::modf(v, &ip);  // reversing y
+			} else {
+				// sample with direction (for skybox)
+
+				float phi = std::atan2(dir.z, dir.x); 
+				float theta = std::asin(dir.y);      
+				u = (phi + art::pi) / (2.0f * art::pi);
+				v = 1.0 - (theta + art::pi / 2.0f) / art::pi;
+			}
 
 			uint32_t px = u * (m_image.GetWidth() - 1);
 			uint32_t py = v * (m_image.GetHeight() - 1);
 			return m_image.GetPixelColor(px, py);
+
 		}
 
 	private:

@@ -17,21 +17,35 @@
 
 
 namespace art {
+
+    // image can be hdr or not
+    // hdr images are read only
     class Image final {
     public:
-        Image() : m_height(0), m_width(0), m_numChannels(0), m_data(nullptr), m_stbImpl(false) { }
+        Image() = delete;
 
-        Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : m_width(width), m_height(height), m_numChannels(nChannels), m_stbImpl(false) {
+        Image(uint32_t width, uint32_t height, uint8_t nChannels = 3) : 
+            m_width(width),
+            m_height(height), 
+            m_numChannels(nChannels), 
+            m_stbImpl(false), 
+            m_isHDR(false),
+            m_fdata(nullptr) 
+        {
             m_data = new uint8_t[m_width * m_height * m_numChannels];
         }
 
-        Image(const std::string &filename) : m_stbImpl(true) {
+        Image(const std::string &filename, bool isHDR = false) : m_stbImpl(true), m_isHDR(isHDR) {
             LoadFromFile(filename); 
         }
 
         ~Image() { 
             if (m_stbImpl) {
-                stbi_image_free(m_data);
+                if (m_isHDR) {
+                    stbi_image_free(m_fdata);
+                } else {
+                    stbi_image_free(m_data);
+                }
             } else {
                 delete[] m_data;
             }
@@ -48,16 +62,33 @@ namespace art {
                 return glm::vec3(1, 0, 1);
             }
 
-            // get pixel color in set of 3x[0, 1]
-            glm::vec3 res(
-                m_data[(py * m_width + px) * m_numChannels]     / 255.0f,
-                m_data[(py * m_width + px) * m_numChannels + 1] / 255.0f,
-                m_data[(py * m_width + px) * m_numChannels + 2] / 255.0f
-            );
+            glm::vec3 res;
+            if (m_isHDR) {
+                res = glm::vec3(
+                    m_fdata[(py * m_width + px) * m_numChannels],
+                    m_fdata[(py * m_width + px) * m_numChannels + 1],
+                    m_fdata[(py * m_width + px) * m_numChannels + 2]
+                );
+
+                res = glm::clamp(res, 0.0f, 3.0f);
+            } else {
+                res = glm::vec3(
+                    m_data[(py * m_width + px) * m_numChannels] / 255.0f,
+                    m_data[(py * m_width + px) * m_numChannels + 1] / 255.0f,
+                    m_data[(py * m_width + px) * m_numChannels + 2] / 255.0f
+                );
+            }
+
             return res;
         }
 
         void SetPixelColor(uint32_t px, uint32_t py, glm::vec3 color, bool gammaCorrection = true) {
+            if (m_isHDR) {
+                std::cerr << "error! cant set pixels of HDR image\n";
+                exit(1);
+            }
+
+
             px = std::clamp(px, uint32_t(0), GetWidth());
             py = std::clamp(py, uint32_t(0), GetHeight());
 
@@ -75,6 +106,11 @@ namespace art {
         }
 
         void SaveAsPng(const std::string &name) const {
+            if (m_isHDR) {
+                std::cerr << "error! cant save HDR image as png\n";
+                exit(1);
+            }
+
             // saving to output directory specified by cmake
             std::string filePath = name;
             #ifdef OUTPUT_DIR
@@ -87,10 +123,10 @@ namespace art {
 
             int res = stbi_write_png(filePath.c_str(), m_width, m_height, m_numChannels, m_data, m_width * m_numChannels);
 
-#ifdef _WIN32
-            // show image in viewer
-            ShellExecute(NULL, "open", filePath.c_str(), NULL, NULL, SW_SHOWDEFAULT);
-#endif
+            #ifdef _WIN32
+                // show image in viewer
+                ShellExecute(NULL, "open", filePath.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+            #endif
         }
 
         void LoadFromFile(const std::string &filename) {
@@ -125,9 +161,18 @@ namespace art {
 
             m_numChannels = 3;
             int texWidth, texHeight, texChannels;
-            m_data = stbi_load(finalFilePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
+            if (m_isHDR) {
+                m_fdata = stbi_loadf(finalFilePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
+            } else {
+                m_data = stbi_load(finalFilePath.c_str(), &texWidth, &texHeight, &texChannels, m_numChannels);
+            }
             
-            if (m_data == NULL) {
+            if (m_isHDR && m_fdata == NULL) {
+                std::cerr << "failed to load hdr image!";
+                exit(1);
+            }
+
+            if (!m_isHDR && m_data == NULL) {
                 std::cerr << "failed to load image!";
                 exit(1);
             }
@@ -151,11 +196,13 @@ namespace art {
 
     private:
         uint8_t *m_data;
+        float   *m_fdata;
 
         uint32_t m_width;
         uint32_t m_height;
         uint8_t  m_numChannels;
 
         bool     m_stbImpl;
+        bool     m_isHDR;
     };
 }

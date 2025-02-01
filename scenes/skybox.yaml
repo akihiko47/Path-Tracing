@@ -10,15 +10,17 @@ output:
 
 
 camera:
-    samples: 200
-    bounces: 6
-    position: [2, 1, 0.5]
-    look at: [0.0, 0.0, 0.0]
-    fov: 35
+    samples: 500
+    bounces: 8
+    position: [-6, 5, 9]
+    look at: [0.0, 1.0, 0.0]
+    fov: 25
 
 
 # skybox can be specified using skybox texture name
-skybox: skybox-tex  # texture name
+# cubemaps and image textures are supported
+skybox: skybox-tex-2  # texture name
+# can also try skybox-tex-1
 
 
 textures:
@@ -30,31 +32,65 @@ textures:
         type: image
         file name: moon-normals-2k.png
 
+    # cubemap
     # order of faces doesn't matter
-    skybox-tex:  # texture name
+    # this skybox will not be hdr
+    skybox-tex-1:  # texture name
         type:   cubemap
-        top:    skybox/top.jpg
-        left:   skybox/left.jpg
-        front:  skybox/front.jpg
-        right:  skybox/right.jpg
-        back:   skybox/back.jpg
-        bottom: skybox/bottom.jpg
+        top:    skybox/cubemap/top.jpg
+        left:   skybox/cubemap/left.jpg
+        front:  skybox/cubemap/front.jpg
+        right:  skybox/cubemap/right.jpg
+        back:   skybox/cubemap/back.jpg
+        bottom: skybox/cubemap/bottom.jpg
+
+    # image texture
+    # note that for skybox image should be 2:1
+    # this texture can be hdr
+    skybox-tex-2:  # texture name
+        type: image
+        file name: skybox/hdr/small_cave_2k.hdr
+        is hdr: true
+
+
+    white-tex: 
+        type: albedo
+        albedo: [0.93, 0.93, 0.93]
+
+    black-tex:
+        type: albedo
+        albedo: [0.33, 0.33, 0.33]
+
+    checker:
+        type: checker
+        scale: 1.0
+        texture 1: white-tex
+        texture 2: black-tex
 
 
 materials:
-    moon:
+    glass:
+        type: glass
+        refraction index: 1.5
+        albedo: [1.0, 1.0, 1.0]
+        smoothness: 1.0
+
+    ground:
         type: plastic
-        albedo: albedo-tex
-        normal map: normal-tex       # [optional] [default = none]
-        normal map strength: 1.5     # [optional] [default = 1]
-        # smoothness: 0.0            # [optional] [default = 0]
-        # specular probability: 0.0  # [optional] [default = 0]
+        albedo: checker
 
 
 objects:
-    moon:
+    sphere:
         type: sphere
-        position: [0.0, 0.0, 0.0]
-        radius: 0.3
-        material: moon
+        position: [0.0, 1.0, 0.0]
+        radius: 1.0
+        material: glass
+
+    ground:
+        type: quad
+        q: [-5,0,-5] 
+        u: [10,0,0]   
+        v: [0,0,10]    
+        material: ground    
 ...

@@ -233,7 +233,8 @@ namespace art {
 				ErrorCheck(texture, "file name");
 
 				result = std::make_unique<ImageTexture>(
-					texture["file name"].as<std::string>()
+					texture["file name"].as<std::string>(),
+					texture["is hdr"] ? texture["is hdr"].as<bool>() : false
 				);
 			} else if (type == "checker") {
 				ErrorCheck(texture, "texture 1");

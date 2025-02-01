@@ -64,9 +64,11 @@ textures:
 
     # can use .png as well as .jpg
     # default search directory is 'textures/' folder
+    # image textures can support hdr (usually for skyboxes)
     image-tex:
         type: image
         file name: wood.png
+        # is hdr: false       # [optional] [default = false]
 
 
 # all meterials here
