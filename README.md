@@ -6,12 +6,13 @@ This format is human-readable, which makes it easy to modify and create new scen
 
 ## Features
 - Multithreading
+- Cross platform
 - [YAML](https://yaml.org/) scenes description
 - Normal mapping
 - Bilateral filtering
 - Defocus blur
-- Cross platform
 - Reflections and refractions
+- Cubemaps and panoramic textures
 - Stratification and antialiasing
 
 ## How to build
