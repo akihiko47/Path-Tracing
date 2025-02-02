@@ -4,17 +4,19 @@
 # =================================================
 
 output:
-    width: 1920
-    height: 1080
+    width: 640
+    height: 360
     file name: skybox-scene.png
 
 
 camera:
-    samples: 2500
-    bounces: 8
-    position: [-6, 5, 9]
+    samples: 1000
+    bounces: 10
+    position: [5, 3, -7]
     look at: [0.0, 1.0, 0.0]
-    fov: 25
+    fov: 30
+    defocus angle: 5
+    focus distance: 9.11
 
 
 # skybox can be specified using skybox texture name
@@ -51,6 +53,7 @@ textures:
         type: image
         file name: skybox/hdr/small_cave_2k.hdr
         is hdr: true
+        hdr range: 10.0
 
 
     white-tex: 

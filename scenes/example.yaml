@@ -69,6 +69,7 @@ textures:
         type: image
         file name: wood.png
         # is hdr: false       # [optional] [default = false]
+        # hdr range: 1.0      # [optional] [default = infinity]
 
 
 # all meterials here

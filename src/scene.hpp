@@ -5,23 +5,23 @@
 
 namespace art {
 
-	class Scene : public Hittable {
+	class Scene : public IHittable {
 	public:
 		Scene() : m_skyboxTextureIndex(-1), m_skyboxColor(glm::vec3(0)) {}
 
-		void AddObject(std::unique_ptr<Hittable> obj) {
+		void AddObject(std::unique_ptr<IHittable> obj) {
 			m_objects.push_back(std::move(obj));
 		}
 
-		void AddMaterial(std::unique_ptr<Material> mat) {
+		void AddMaterial(std::unique_ptr<IMaterial> mat) {
 			m_materials.push_back(std::move(mat));
 		}
 
-		void AddTexture(std::unique_ptr<Texture> tex) {
+		void AddTexture(std::unique_ptr<ITexture> tex) {
 			m_textures.push_back(std::move(tex));
 		}
 
-		void AddSkybox(std::unique_ptr<Texture> tex) {
+		void AddSkybox(std::unique_ptr<ITexture> tex) {
 			m_textures.push_back(std::move(tex));
 			m_skyboxTextureIndex = m_textures.size() - 1;
 		}
@@ -51,9 +51,9 @@ namespace art {
 		}
 
 	private:
-		std::vector<std::unique_ptr<Hittable>> m_objects;
-		std::vector<std::unique_ptr<Material>> m_materials;
-		std::vector<std::unique_ptr<Texture>>  m_textures;
+		std::vector<std::unique_ptr<IHittable>> m_objects;
+		std::vector<std::unique_ptr<IMaterial>> m_materials;
+		std::vector<std::unique_ptr<ITexture>>  m_textures;
 
 		glm::vec3 m_skyboxColor;
 		int m_skyboxTextureIndex;  // if this index is -1 then skybox is solid color

@@ -127,8 +127,8 @@ namespace art {
 			}
 		}
 
-		Material* ParseMaterial(std::string materialName, Scene &scene) {
-			std::unique_ptr<Material> result;
+		IMaterial* ParseMaterial(std::string materialName, Scene &scene) {
+			std::unique_ptr<IMaterial> result;
 
 			// check if material with that name already created
 			if (m_parsedMaterials.find(materialName) != m_parsedMaterials.end()) {
@@ -203,14 +203,14 @@ namespace art {
 				exit(1);
 			}
 
-			Material *ptr = result.get();
+			IMaterial *ptr = result.get();
 			m_parsedMaterials[materialName] = ptr;
 			scene.AddMaterial(std::move(result));
 			return ptr;
 		}
 
-		Texture* ParseTexture(std::string textureName, Scene &scene, bool forSkybox = false) {
-			std::unique_ptr<Texture> result;
+		ITexture* ParseTexture(std::string textureName, Scene &scene, bool forSkybox = false) {
+			std::unique_ptr<ITexture> result;
 
 			// check if texture with that name already created
 			if (m_parsedTextures.find(textureName) != m_parsedTextures.end()) {
@@ -234,7 +234,8 @@ namespace art {
 
 				result = std::make_unique<ImageTexture>(
 					texture["file name"].as<std::string>(),
-					texture["is hdr"] ? texture["is hdr"].as<bool>() : false
+					texture["is hdr"] ? texture["is hdr"].as<bool>() : false,
+					texture["hdr range"] ? texture["hdr range"].as<float>() : art::infinity
 				);
 			} else if (type == "checker") {
 				ErrorCheck(texture, "texture 1");
@@ -268,7 +269,7 @@ namespace art {
 				exit(1);
 			}
 
-			Texture *ptr = result.get();
+			ITexture *ptr = result.get();
 			m_parsedTextures[textureName] = ptr;
 			if (!forSkybox) {
 				scene.AddTexture(std::move(result));
@@ -302,8 +303,8 @@ namespace art {
 
 		// need these containers to check if parsed object already exists
 		// Scene object is owner of these, so we dont delete them in destructor
-		std::unordered_map<std::string, Material*> m_parsedMaterials;
-		std::unordered_map<std::string, Texture*> m_parsedTextures;
+		std::unordered_map<std::string, IMaterial*> m_parsedMaterials;
+		std::unordered_map<std::string, ITexture*> m_parsedTextures;
 	};
 
 }

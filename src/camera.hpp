@@ -128,21 +128,17 @@ namespace art {
 			// return background (skybox) if no hit
 			art::HitInfo info;
 			if (!scene.Hit(r, art::Interval(0.001, art::infinity), info)) {
-				currDepth = 0;
 				return scene.SampleSkybox(r.GetDirection());
 			}
 
 			Ray rayOut;
 			glm::vec3 attenuation;
-			glm::vec3 emitted = info.mat->Emission(info.u, info.v, info.p);
 
 			if (!info.mat->Scatter(r, info, attenuation, rayOut)) {
-				return emitted;
+				return attenuation;
+			} else {
+				return attenuation * RayColor(rayOut, currDepth - 1, scene);
 			}
-
-			glm::vec3 scattered = attenuation * RayColor(rayOut, currDepth - 1, scene);
-
-			return emitted + scattered;
 		}
 
 		Ray GetRay(uint32_t i, uint32_t j, uint32_t s_i, uint32_t s_j) const {

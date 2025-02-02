@@ -30,12 +30,13 @@ namespace art {
             m_numChannels(nChannels), 
             m_stbImpl(false), 
             m_isHDR(false),
-            m_fdata(nullptr) 
+            m_fdata(nullptr),
+            m_hdrRange(5.0f)
         {
             m_data = new uint8_t[m_width * m_height * m_numChannels];
         }
 
-        Image(const std::string &filename, bool isHDR = false) : m_stbImpl(true), m_isHDR(isHDR) {
+        Image(const std::string &filename, bool isHDR = false, float hdrRange = 5.0f) : m_stbImpl(true), m_isHDR(isHDR), m_hdrRange(hdrRange) {
             LoadFromFile(filename); 
         }
 
@@ -70,7 +71,7 @@ namespace art {
                     m_fdata[(py * m_width + px) * m_numChannels + 2]
                 );
 
-                res = glm::clamp(res, 0.0f, 3.0f);
+                res = glm::clamp(res, 0.0f, m_hdrRange);
             } else {
                 res = glm::vec3(
                     m_data[(py * m_width + px) * m_numChannels] / 255.0f,
@@ -83,12 +84,6 @@ namespace art {
         }
 
         void SetPixelColor(uint32_t px, uint32_t py, glm::vec3 color, bool gammaCorrection = true) {
-            if (m_isHDR) {
-                std::cerr << "error! cant set pixels of HDR image\n";
-                exit(1);
-            }
-
-
             px = std::clamp(px, uint32_t(0), GetWidth());
             py = std::clamp(py, uint32_t(0), GetHeight());
 
@@ -106,11 +101,6 @@ namespace art {
         }
 
         void SaveAsPng(const std::string &name) const {
-            if (m_isHDR) {
-                std::cerr << "error! cant save HDR image as png\n";
-                exit(1);
-            }
-
             // saving to output directory specified by cmake
             std::string filePath = name;
             #ifdef OUTPUT_DIR
@@ -204,5 +194,6 @@ namespace art {
 
         bool     m_stbImpl;
         bool     m_isHDR;
+        float    m_hdrRange;
     };
 }

@@ -4,15 +4,15 @@
 #include "image.hpp"
 
 namespace art {
-	class Texture {
+	class ITexture {
 	public:
-		virtual ~Texture() = default;
+		virtual ~ITexture() = default;
 
-		virtual glm::vec3 Sample(float u, float v, const glm::vec3 &p, const glm::vec3 &dir) const { return glm::vec3(1, 0, 1); }
+		virtual glm::vec3 Sample(float u, float v, const glm::vec3 &p, const glm::vec3 &dir) const = 0;
 	};
 
 
-	class SolidColorTexture : public Texture {
+	class SolidColorTexture : public ITexture {
 	public:
 		SolidColorTexture(const glm::vec3 &albedo) : m_albedo(albedo) {}
 
@@ -25,9 +25,9 @@ namespace art {
 	};
 
 
-	class CheckerTexture : public Texture {
+	class CheckerTexture : public ITexture {
 	public:
-		CheckerTexture(float scale, const Texture *evenTexture, const Texture *oddTexture) :
+		CheckerTexture(float scale, const ITexture *evenTexture, const ITexture *oddTexture) :
 			m_scale(scale),
 			m_evenTexture(evenTexture),
 			m_oddTexture(oddTexture) {}
@@ -46,14 +46,14 @@ namespace art {
 
 	private:
 		float          m_scale;
-		const Texture *m_evenTexture;
-		const Texture *m_oddTexture;
+		const ITexture *m_evenTexture;
+		const ITexture *m_oddTexture;
 	};
 
 
-	class ImageTexture : public Texture {
+	class ImageTexture : public ITexture {
 	public:
-		ImageTexture(const std::string &filename, bool isHDR) : m_image(filename, isHDR) {}
+		ImageTexture(const std::string &filename, bool isHDR, float hdrRange) : m_image(filename, isHDR, hdrRange) {}
 
 		glm::vec3 Sample(float u, float v, const glm::vec3 &p, const glm::vec3 &dir) const {
 			if (dir == glm::vec3(0)) {
@@ -83,7 +83,7 @@ namespace art {
 		const Image m_image;
 	};
 
-	class CubemapTexture : public Texture {
+	class CubemapTexture : public ITexture {
 	public:
 		CubemapTexture(std::vector<std::string> faces) {
 			std::cout << "loading cubemap with images:\n";

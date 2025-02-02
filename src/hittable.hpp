@@ -10,13 +10,14 @@ namespace art {
 	const float infinity = std::numeric_limits<float>::infinity();
 	const float pi = 3.1415926;
 
-	class Material;  // to solve circular dependency
+	class IMaterial;  // to solve circular dependency
 	struct HitInfo {
 		glm::vec3 p;
 		glm::vec3 N;
 		glm::vec3 T;
 		glm::vec3 BT;
-		Material *mat;
+		IMaterial *mat;
+
 		float t;
 		float u;
 		float v;
@@ -52,17 +53,17 @@ namespace art {
 	const Interval Interval::full = Interval(-infinity, +infinity);
 
 
-	class Hittable {
+	class IHittable {
 	public:
-		virtual ~Hittable() = default;
+		virtual ~IHittable() = default;
 
 		virtual bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const = 0;
 	};
 
 
-	class Sphere : public Hittable {
+	class Sphere : public IHittable {
 	public:
-		Sphere(const glm::vec3 &center, float radius, Material *mat) : m_center(center), m_radius(std::fmax(0, radius)), m_mat(mat) {}
+		Sphere(const glm::vec3 &center, float radius, IMaterial *mat) : m_center(center), m_radius(std::fmax(0, radius)), m_mat(mat) {}
 
 		bool Hit(const Ray& r, Interval tSpan, HitInfo& hitInfo) const override {
 			glm::vec3 no = m_center - r.GetOrigin();
@@ -111,12 +112,12 @@ namespace art {
 	private:
 		glm::vec3 m_center;
 		float     m_radius;
-		Material *m_mat;
+		IMaterial *m_mat;
 	};
 
-	class Quad : public Hittable {
+	class Quad : public IHittable {
 	public:
-		Quad(const glm::vec3 &Q, const glm::vec3 &u, const glm::vec3 &v, Material *mat, bool oneSided) : 
+		Quad(const glm::vec3 &Q, const glm::vec3 &u, const glm::vec3 &v, IMaterial *mat, bool oneSided) :
 				m_Q(Q),
 				m_u(u), 
 				m_v(v), 
@@ -183,11 +184,11 @@ namespace art {
 		}
 
 	private:
-		glm::vec3 m_Q;
-		glm::vec3 m_u;
-		glm::vec3 m_v;
-		Material *m_mat;
-		bool      m_oneSided;
+		glm::vec3  m_Q;
+		glm::vec3  m_u;
+		glm::vec3  m_v;
+		IMaterial *m_mat;
+		bool       m_oneSided;
 
 		glm::vec3 m_N, m_w;
 		float m_D;
