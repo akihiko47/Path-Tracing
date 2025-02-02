@@ -4,7 +4,7 @@
 #include <filesystem>
 
 #ifdef _WIN32
-#include <Windows.h>
+    #include <Windows.h>
 #endif
 
 #define STBI_MSC_SECURE_CRT

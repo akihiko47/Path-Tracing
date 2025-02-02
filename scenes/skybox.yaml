@@ -10,7 +10,7 @@ output:
 
 
 camera:
-    samples: 1000
+    samples: 500
     bounces: 10
     position: [5, 3, -7]
     look at: [0.0, 1.0, 0.0]
@@ -26,14 +26,6 @@ skybox: skybox-tex-2  # texture name
 
 
 textures:
-    albedo-tex:
-        type: image
-        file name: moon-albedo-2k.png
-
-    normal-tex:
-        type: image
-        file name: moon-normals-2k.png
-
     # cubemap
     # order of faces doesn't matter
     # this skybox will not be hdr

@@ -32,7 +32,7 @@ namespace art {
 			}
 		}
 
-		Camera GetCamera(Scene &scene) { 
+		Camera GetCamera() { 
 			ErrorCheck(m_file, "camera");
 
 			YAML::Node camera = m_file["camera"];

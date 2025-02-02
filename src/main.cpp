@@ -26,7 +26,7 @@ void ShowTutorial() {
 void FilterImage(const std::string &fileName, uint32_t msize, float sigma, float bsigma) {
     art::Timer timer{"Filtering"};
 
-    // read image filter it
+    // read image and filter it
     art::Image img = art::Image(fileName);
     std::cout << "image loaded, filtering\n";
     std::unique_ptr<art::Image> filteredImage = art::BilateralFilter(img, msize, sigma, bsigma);
@@ -58,13 +58,11 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    // this object is responsible only for parsing
-    // it returns needed variables by value
-    // except for image, it is smart pointer so you don't need to delete it
+
     art::SceneParser parser{std::string(argv[1])};
 
     art::Scene                  scene;
-    art::Camera                 camera      = parser.GetCamera(scene);  // we pass scene to add cubemap texture if needed
+    art::Camera                 camera      = parser.GetCamera(); 
     std::unique_ptr<art::Image> renderImage = parser.GetImage();
     std::string                 outputName  = parser.GetOutputFileName();
 

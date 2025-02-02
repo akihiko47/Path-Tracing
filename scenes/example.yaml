@@ -107,14 +107,6 @@ materials:
         # specular probability: 0.0  # [optional] [default = 0]
         # normal map: <texture-name> # [optional] [default = none]
         # normal map strength: 1.0   # [optional] [default = 1]
-    
-    green:
-        type: plastic
-        albedo: [0.62, 0.90, 0.30]
-        # smoothness: 0.0            # [optional] [default = 0]
-        # specular probability: 0.0  # [optional] [default = 0]
-        # normal map: <texture-name> # [optional] [default = none]
-        # normal map strength: 1.0   # [optional] [default = 1]
 
     blue:
         type: plastic
