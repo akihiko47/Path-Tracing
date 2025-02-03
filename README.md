@@ -94,7 +94,7 @@ Here's what it's gonna look like:
 | Original image | Filtered image |
 | -------------- | -------------- |
 | ![original](output/readme/filter-original.png) | ![filtered](output/readme/filter-filtered.png) |
-| Example scene *400x400* rendered with 4k samples and 10 bounces. Render time = 318s | Filtered with `kernel-size` = 15, `sigma` = 10, `b-sigma` = 0.05. Filter time = 1.5s |
+| `example.yaml` 4k samples, 10 bounces (render time = 318s) | `kernel-size` = 15, `sigma` = 10, `b-sigma` = 0.05 (filter time = 1.5s) |
 
 
 
