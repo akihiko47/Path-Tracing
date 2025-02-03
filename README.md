@@ -1,5 +1,7 @@
 # Simple Path Tracer
-![banner](output/readme/banner.png)
+![banner](output/readme/banner-mirrors.png)
+![banner](output/readme/banner-skybox.png)
+![banner](output/readme/banner-moon.png)
 
 Multithreaded path tracer with [YAML](https://yaml.org/) scenes description. 
 This format is human-readable, which makes it easy to modify and create new scenes. 
