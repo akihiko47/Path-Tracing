@@ -1,4 +1,4 @@
-# Simple Path Tracer
+# Red Eye Path Tracer
 ![banner](output/readme/banner-mirrors.png)
 ![banner](output/readme/banner-skybox.png)
 ![banner](output/readme/banner-moon.png)
@@ -30,16 +30,16 @@ Alternatively, you can use cmake `cmake --build .` to build this project.
 
 ## Usage
 This project should be used as command line application. 
-After building you will see executable file `PathTracing` that can be launched from terminal. 
+After building you will see executable file `RedEye` that can be launched from terminal. 
 If you launch this executable without arguments you will see something like this:
 ```
-=== Akihiko Path Tracer ===
+=== Red Eye Path Tracer ===
 
-Usage:   ./PathTracing <scene-name>
-Example: ./PathTracing example
+Usage:   ./RedEye <scene-name>
+Example: ./RedEye example
 
-Usage:   ./PathTracing filter <image-name> <kernel-size> <sigma> <b-sigma>
-Example: ./PathTracing filter example-scene.png 15 10 0.1
+Usage:   ./RedEye filter <image-name> <kernel-size> <sigma> <b-sigma>
+Example: ./RedEye filter example-scene.png 15 10 0.1
 
 None: default search directories are 'project-root/scenes/' and 'project-root/output/'
 (but you can specify absolute path to yaml scene file or image)
@@ -56,12 +56,12 @@ but you can specify absolute path.
 You don't need to specify `.yaml` extension for file. 
 Image will be saved in `output/` directory with name specified inside scene file's output section.
 ```
-./PathTracing <scene-name>
+./RedEye <scene-name>
 ```
 
 You can try rendering example scene using this command: 
 ```
-./PathTracing example
+./RedEye example
 ```
 
 ### Filtering mode
@@ -70,7 +70,7 @@ to denoise the specified image.
 Bilateral filtering is a non-linear, edge-preserving smoothing technique that reduces noise 
 while preserving sharp edges.
 ```
-./PathTracing filter <image-name> <kernel-size> <sigma> <b-sigma>
+./RedEye filter <image-name> <kernel-size> <sigma> <b-sigma>
 ```
 The parameters are:
 1) `image-name` - the name of the input image file to be denoised. Image extension must be preserved. 
@@ -87,7 +87,7 @@ The higher `b-sigma` is, the larger features get smoothened.
 
 Here is an example of denoising example scene's result:
 ```
-./PathTracing filter example-scene.png 15 10 0.1
+./RedEye filter example-scene.png 15 10 0.1
 ```
 Note that these parameters will work pretty poorly for a very noisy image.
 To see better results you can increase the number of samples per pixel to about 2000. 

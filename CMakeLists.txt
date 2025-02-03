@@ -1,6 +1,6 @@
 cmake_minimum_required ( VERSION 3.20 )
 
-project ( PathTracing LANGUAGES CXX )
+project ( RedEye LANGUAGES CXX )
 
 set ( CMAKE_CXX_STANDARD          17 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
@@ -33,11 +33,11 @@ set (SOURCES
 )
 
 
-add_executable(PathTracing ${SOURCES})
+add_executable(RedEye ${SOURCES})
 
-target_include_directories(PathTracing PRIVATE ${PROJECT_SOURCE_DIR}/dependencies ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(RedEye PRIVATE ${PROJECT_SOURCE_DIR}/dependencies ${PROJECT_SOURCE_DIR}/src)
 
-target_compile_definitions(PathTracing PRIVATE 
+target_compile_definitions(RedEye PRIVATE 
 	OUTPUT_DIR="${PROJECT_SOURCE_DIR}/output" 
 	TEXTURE_DIR="${PROJECT_SOURCE_DIR}/textures" 
 	SCENE_DIR="${PROJECT_SOURCE_DIR}/scenes"
@@ -65,11 +65,11 @@ if(NOT yaml-cpp_POPULATED)
   add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml-cpp_BINARY_DIR})
 endif()
 
-target_link_libraries(PathTracing PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(RedEye PUBLIC yaml-cpp::yaml-cpp)
 
 
 if(MSVC)
- target_compile_options(PathTracing PRIVATE "/MP")
+ target_compile_options(RedEye PRIVATE "/MP")
 endif()
 
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT PathTracing)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT RedEye)

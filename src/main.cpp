@@ -11,11 +11,11 @@
 
 
 void ShowTutorial() {
-    std::cout << "\n=== Akihiko Path Tracer ===\n\n";
-    std::cout << "Usage:   ./PathTracing <scene-name>\n";
-    std::cout << "Example: ./PathTracing example\n\n";
-    std::cout << "Usage:   ./PathTracing filter <image-name> <kernel-size> <sigma> <b-sigma>\n";
-    std::cout << "Example: ./PathTracing filter example-scene.png 15 10 0.1\n\n";
+    std::cout << "\n=== Red Eye Path Tracer ===\n\n";
+    std::cout << "Usage:   ./RedEye <scene-name>\n";
+    std::cout << "Example: ./RedEye example\n\n";
+    std::cout << "Usage:   ./RedEye filter <image-name> <kernel-size> <sigma> <b-sigma>\n";
+    std::cout << "Example: ./RedEye filter example-scene.png 15 10 0.1\n\n";
     std::cout << "None: default search directories are 'project-root/scenes/' and 'project-root/output/'\n";
     std::cout << "(but you can specify absolute path to yaml scene file or image)\n";
     std::cout << "Resulting image will be saved in 'project-root/output/'\n\n";
