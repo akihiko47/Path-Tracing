@@ -57,7 +57,7 @@ Image will be saved in `output/` directory with name specified inside scene file
 ./PathTracing <scene-name>
 ```
 
-You can try to render example scene using this command: 
+You can try rendering example scene using this command: 
 ```
 ./PathTracing example
 ```
@@ -88,7 +88,17 @@ Here is an example of denoising example scene's result:
 ./PathTracing filter example-scene.png 15 10 0.1
 ```
 Note that these parameters will work pretty poorly for a very noisy image.
-To see better results you can increase the number of samples per pixel to about 2000.
+To see better results you can increase the number of samples per pixel to about 2000. 
+Here's what it's gonna look like: 
+
+| Original image | Filtered image |
+| -------------- | -------------- |
+| image1         | image2         |
+| -------------- | -------------- |
+| rendered at something | filtered with something |
+
+
+
 ## Optimization thoughts
 Right now this path tracer is incredible inefficient. 
 So far the available primitives are spheres and quads. 
