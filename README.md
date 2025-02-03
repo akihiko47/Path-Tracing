@@ -1,5 +1,5 @@
 # Simple Path Tracer
-![banner](output/banner.png)
+![banner](output/readme/banner.png)
 
 Multithreaded path tracer with [YAML](https://yaml.org/) scenes description. 
 This format is human-readable, which makes it easy to modify and create new scenes. 
@@ -93,9 +93,8 @@ Here's what it's gonna look like:
 
 | Original image | Filtered image |
 | -------------- | -------------- |
-| image1         | image2         |
-| -------------- | -------------- |
-| rendered at something | filtered with something |
+| ![original](output/readme/filter-original.png) | ![filtered](output/readme/filter-filtered.png) |
+| Example scene *400x400* rendered with 4k samples and 10 bounces. Render time = 318s | Filtered with `kernel-size` = 15, `sigma` = 10, `b-sigma` = 0.05. Filter time = 1.5s |
 
 
 
