@@ -93,8 +93,7 @@ Here's what it's gonna look like:
 
 | Original image | Filtered image |
 | -------------- | -------------- | 
-| <img src='output/readme/filter-original.png' width='400px' /> | <img src='output/readme/filter-filtered.png' width='400px' /> |
-| ![original](output/readme/filter-original.png) | ![filtered](output/readme/filter-filtered.png) |
+| ![original](output/readme/filter-original.png){width=400} | ![filtered](output/readme/filter-filtered.png){width=400} |
 | `example.yaml` 4k samples, 10 bounces (render time = 318s) | `kernel-size` = 15, `sigma` = 10, `b-sigma` = 0.05 (filter time = 1.5s) |
 
 
