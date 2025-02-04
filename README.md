@@ -26,7 +26,7 @@ cmake ..
 ```
 Build files will be in `build/` folder. 
 After that you can use `make` or launch solution in `Visual Studio`. 
-Alternatively, you can use cmake `cmake --build .` to build this project.
+Alternatively, you can use `cmake --build .` to build this project.
 
 ## Usage
 This project should be used as command line application. 
@@ -54,7 +54,7 @@ This mode will render [YAML](https://yaml.org/) scene file to png image.
 Default search directory for `.yaml` files is `scenes/` directory inside project's root, 
 but you can specify absolute path. 
 You don't need to specify `.yaml` extension for file. 
-Image will be saved in `output/` directory with name specified inside scene file's output section.
+Image will be saved inside `output/` directory with name specified inside scene file's output section.
 ```
 ./RedEye <scene-name>
 ```
@@ -65,8 +65,7 @@ You can try rendering example scene using this command:
 ```
 
 ### Filtering mode
-This command applies [bilateral filtering](https://en.wikipedia.org/wiki/Bilateral_filter) 
-to denoise the specified image. 
+This mode applies [bilateral filtering](https://en.wikipedia.org/wiki/Bilateral_filter) to denoise specified image. 
 Bilateral filtering is a non-linear, edge-preserving smoothing technique that reduces noise 
 while preserving sharp edges.
 ```
@@ -113,11 +112,11 @@ To describe scene you need to specify:
    - number of ray bounces until it is destroyed
    - position of camera
    - position of target (what to look at)
-   - field of view [optional]
-   - defocus angle (defocus blur strength) [optional]
-   - focus distance [optional]
+   - field of view **[optional]**
+   - defocus angle (defocus blur strength) **[optional]**
+   - focus distance **[optional]**
 3) objects in scene
-4) skybox [optional]
+4) skybox **[optional]**
 
 To add objects you need to specify their materials and to create materials you need to specify their textures. 
 You can use one texture/material more than once. 
@@ -131,22 +130,18 @@ output:
     height: 360
     file name: simple-scene.png
 
-
 camera:
     samples: 500
     bounces: 10
     position: [3, 3, 3]
     look at: [0.0, 0.0, 0.0]
 
-
 skybox: [1.0, 1.0, 1.0]
-
 
 materials:
     main-mat:
         type: plastic
         albedo: [0.0, 0.0, 0.0]
-
 
 objects:
     sphere:
