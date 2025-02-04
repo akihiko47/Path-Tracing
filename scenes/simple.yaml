@@ -1,0 +1,34 @@
+---
+# =================================================
+#     see 'example.yaml' scene for explanation
+# =================================================
+
+output:
+    width: 640
+    height: 360
+    file name: simple-scene.png
+
+
+camera:
+    samples: 500
+    bounces: 10
+    position: [3, 3, 3]
+    look at: [0.0, 0.0, 0.0]
+
+
+skybox: [1.0, 1.0, 1.0]
+
+
+materials:
+    main-mat:
+        type: plastic
+        albedo: [0.0, 0.0, 0.0]
+
+
+objects:
+    sphere:
+        type: sphere
+        position: [0.0, 0.0, 0.0]
+        radius: 1.0
+        material: main-mat
+...

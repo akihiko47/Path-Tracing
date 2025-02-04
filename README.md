@@ -99,7 +99,62 @@ Here is an example of denoising example scene's result:
 | ![original](output/readme/filter-original.png){width=400} | ![filtered](output/readme/filter-filtered.png){width=400} |
 | `example.yaml` 4k samples, 10 bounces (render time = 318s) | `kernel-size` = 15, `sigma` = 10, `b-sigma` = 0.05 (filter time = 1.5s) |
 
+## Scene description
+> [!TIP]
+> See [example.yaml](scenes/example.yaml) for full explanation of how to describe scene.
 
+To describe scene you need to specify:
+1) parameters of output image 
+   - name
+   - width
+   - height
+2) camera settings
+   - number of ray samples per pixel
+   - number of ray bounces until it is destroyed
+   - position of camera
+   - position of target (what to look at)
+   - field of view [optional]
+   - defocus angle (defocus blur strength) [optional]
+   - focus distance [optional]
+3) objects in scene
+4) skybox [optional]
+
+To add objects you need to specify their materials and to create materials you need to specify their textures. 
+You can use one texture/material more than once. 
+If you describe texture/material and not use it, it will not be parsed. 
+Order of blocks inside `.yaml` file doesn't matter.
+The simplest scene can be described as follows:
+
+``` yaml
+output:
+    width: 640
+    height: 360
+    file name: simple-scene.png
+
+
+camera:
+    samples: 500
+    bounces: 10
+    position: [3, 3, 3]
+    look at: [0.0, 0.0, 0.0]
+
+
+skybox: [1.0, 1.0, 1.0]
+
+
+materials:
+    main-mat:
+        type: plastic
+        albedo: [0.0, 0.0, 0.0]
+
+
+objects:
+    sphere:
+        type: sphere
+        position: [0.0, 0.0, 0.0]
+        radius: 1.0
+        material: main-mat
+```
 
 ## Optimization thoughts
 Right now this path tracer is incredible inefficient. 
